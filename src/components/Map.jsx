@@ -3,11 +3,32 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
+import styled from 'styled-components'
 // import axios from 'axios'
+
+import MapStyleToggle from './MapStyleToggle'
+import { setMapboxStyle } from '../actions'
 
 const accessToken =
   'pk.eyJ1Ijoia29udGVudHkiLCJhIjoiY2s1NnZlaHBhMDdyZDNmcGd2MGZiMXF6aCJ9.2VrHuqCEQVaI8dJqicq1Ug'
 mapboxgl.accessToken = accessToken
+
+const TopRight = styled.div`
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  text-align: right;
+`
+
+const europeLayer = {
+  id: 'europe-layer',
+  type: 'fill',
+  source: 'europe',
+  paint: {
+    'fill-color': 'rgba(200, 100, 240, 0.4)',
+    'fill-outline-color': 'rgba(200, 100, 240, 1)'
+  }
+}
 
 class Map extends Component {
   constructor() {
@@ -48,15 +69,7 @@ class Map extends Component {
       })
 
       // Add a layer showing the state polygons.
-      this.map.addLayer({
-        id: 'europe-layer',
-        type: 'fill',
-        source: 'europe',
-        paint: {
-          'fill-color': 'rgba(200, 100, 240, 0.4)',
-          'fill-outline-color': 'rgba(200, 100, 240, 1)'
-        }
-      })
+      this.map.addLayer(europeLayer)
 
       // When a click event occurs on a feature in the europe layer, open a popup at the
       // location of the click, with description HTML from its properties.
@@ -79,8 +92,34 @@ class Map extends Component {
     })
   }
 
+  componentDidUpdate(prevProps) {
+    const currentStyle = this.props.mapboxStyle
+    const previousStyle = prevProps.mapboxStyle
+    if (!Object.is(currentStyle, previousStyle)) {
+      this.map.setStyle(`mapbox://styles/mapbox/${currentStyle}`, {
+        copySources: ['europe'],
+        copyLayers: ['europe-layer']
+      })
+      this.map.on('style.load', () => {
+        console.log('loaded')
+        this.map.addSource('europe', {
+          type: 'geojson',
+          data: './static/europe.geojson'
+        })
+        this.map.addLayer(europeLayer)
+      })
+    }
+  }
+
   render() {
-    return <div ref={el => (this.mapContainer = el)} style={{ flexGrow: 1 }} />
+    return (
+      <>
+        <div ref={el => (this.mapContainer = el)} style={{ flexGrow: 1 }} />
+        <TopRight>
+          <MapStyleToggle onClick={this.props.setMapboxStyle} />
+        </TopRight>
+      </>
+    )
   }
 }
 
@@ -90,8 +129,9 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(Map)
+export default connect(mapStateToProps, { setMapboxStyle })(Map)
 
 Map.propTypes = {
-  mapboxStyle: PropTypes.string.isRequired
+  mapboxStyle: PropTypes.string.isRequired,
+  setMapboxStyle: PropTypes.func.isRequired
 }

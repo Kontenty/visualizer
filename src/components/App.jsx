@@ -27,6 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
   toolbar: theme.mixins.toolbar,
   mapWrapper: {
+    position: 'relative',
     display: 'flex',
     height: 'calc(100vh - 64px)'
   }

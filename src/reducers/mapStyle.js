@@ -5,7 +5,7 @@ export const mapState = {
 }
 
 const mapStyle = createReducer(mapState, {
-  SET_MAPBOX_style(state, action) {
+  SET_MAPBOX_STYLE(state, action) {
     state.mapboxStyle = action.payload
   }
 })
