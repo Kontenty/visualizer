@@ -1,7 +1,8 @@
 import React from 'react'
 // import { connect } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
-import { Drawer } from '@material-ui/core'
+import { Drawer, Fab } from '@material-ui/core'
+import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 
 const drawerWidth = 240
 
@@ -47,6 +48,26 @@ const SideBar = () => {
       }}
     >
       <div className={classes.toolbar} />
+      <div className={classes.uploadContainer}>
+        <label htmlFor='upload-file'>
+          <input
+            style={{ display: 'none' }}
+            id='upload-file'
+            name='upload-file'
+            type='file'
+          />
+          <Fab
+            color='primary'
+            size='small'
+            component='span'
+            aria-label='add'
+            variant='extended'
+          >
+            <CloudUploadIcon fontSize='small' style={{ margin: '0 5px 0 3px' }} /> Upload
+            file
+          </Fab>
+        </label>
+      </div>
     </Drawer>
   )
 }
