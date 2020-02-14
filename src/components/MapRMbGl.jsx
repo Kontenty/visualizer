@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import ReactMapboxGl, { Layer, Source } from 'react-mapbox-gl'
+import ReactMapboxGl from 'react-mapbox-gl'
 import axios from 'axios'
 
-// import GeoJsonMap from './GeoJsonMap'
+import GeoJsonMap from './GeoJsonMap'
 
 const MapBox = ReactMapboxGl({
   minZoom: 3,
@@ -15,7 +15,8 @@ const paint = {
   'fill-color': 'rgba(200, 100, 240, 0.4)',
   'fill-outline-color': 'rgba(200, 100, 240, 1)'
 }
-class Map extends Component {
+
+class MapRGL extends Component {
   constructor() {
     super()
     this.state = {
@@ -48,9 +49,10 @@ class Map extends Component {
           containerStyle={{ flexGrow: 1 }}
           onClick={e => console.log(e)}
         >
-          <Source id='source_europe' geoJsonSource={geojsonData} />
+          {/* <Source id='source_europe' geoJsonSource={geojsonData} /> */}
           {showGeoJson && (
-            <Layer type='fill' id='layer_eu_geo' sourceId='source_europe' paint={paint} />
+            // <Layer type='fill' id='layer_eu_geo' sourceId='source_europe' paint={paint} />
+            <GeoJsonMap data={geojsonData} paint={paint} />
           )}
         </MapBox>
       </>
@@ -58,4 +60,4 @@ class Map extends Component {
   }
 }
 
-export default Map
+export default MapRGL
