@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  isVisible: false,
+  isVisible: true,
   isTableVisible: false,
   columns: [
     'Internal flows [MW]',

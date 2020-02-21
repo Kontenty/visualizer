@@ -91,7 +91,7 @@ class MapRGL extends Component {
       branchesGeoData: null,
       showGeoJson: false,
       popupInfo: null,
-      flowByCat: null
+      showPopup: false
     }
   }
 
@@ -133,7 +133,6 @@ class MapRGL extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log(equalArrays(this.props.selectedCategories, prevProps.selectedCategories))
     if (
       this.state.popupInfo &&
       !equalArrays(this.props.selectedCategories, prevProps.selectedCategories)
@@ -176,7 +175,7 @@ class MapRGL extends Component {
     const clicked = event.features[0]
 
     if (clicked) {
-      this.props.toggleVisibility()
+      // this.props.toggleVisibility()
       const { properties } = clicked
       const flows = JSON.parse(properties.flows)
       const zoneNames = JSON.parse(properties.zones)
@@ -196,9 +195,7 @@ class MapRGL extends Component {
         totalFlow
       }
 
-      const flowByCat = filteredCat.map((cat, i) => [cat, flowValues[i]])
-
-      this.setState({ popupInfo, flowByCat })
+      this.setState({ popupInfo, showPopup: true })
     }
   }
 
@@ -207,8 +204,8 @@ class MapRGL extends Component {
   }
 
   renderPopup() {
-    const { popupInfo } = this.state
-    if (popupInfo) {
+    const { popupInfo, showPopup } = this.state
+    if (showPopup) {
       const { properties, columns, rowData } = popupInfo
 
       return (
@@ -216,8 +213,8 @@ class MapRGL extends Component {
           longitude={popupInfo.lngLat[0]}
           latitude={popupInfo.lngLat[1]}
           onClose={() => {
-            this.setState({ popupInfo: null })
-            this.props.toggleVisibility()
+            this.setState({ showPopup: false })
+            // this.props.toggleVisibility()
           }}
         >
           <div>

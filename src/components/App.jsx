@@ -31,7 +31,12 @@ const useStyles = makeStyles(theme => ({
   mapWrapper: {
     position: 'relative',
     display: 'flex',
-    height: 'calc(100vh - 64px)'
+    height: 'calc(100vh - 64px)',
+    '& .mapboxgl-popup-content': {
+      borderRadius: '5px',
+      boxShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
+      padding: '15px 12px 10px'
+    }
   }
 }))
 
