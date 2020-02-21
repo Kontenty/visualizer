@@ -11,9 +11,12 @@ import { point } from '@turf/helpers'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
 import Table from './Table'
+import Markers from './Markers'
+
 // import arrow from '../assets/arrow.svg'
 import { sumArrays, equalArrays } from '../helpers'
 import { toggleVisibility } from '../slices/branchDetailSlice'
+import centers from '../assets/zoneCenters.json'
 
 const countriesLineLayer = {
   id: 'lines',
@@ -91,7 +94,8 @@ class MapRGL extends Component {
       branchesGeoData: null,
       showGeoJson: false,
       popupInfo: null,
-      showPopup: false
+      showPopup: false,
+      netPositions: null
     }
   }
 
@@ -155,14 +159,21 @@ class MapRGL extends Component {
         [_.min(sumPerCountry), _.max(sumPerCountry)],
         t => interpolateOranges(t)
       )
+
+      const netPositions = []
       const fillExpression = ['match', ['get', 'iso_a2']]
-      sumPerCountry.forEach((val, i) => {
-        return fillExpression.push(rowData[i][0], colorScale(val))
+      sumPerCountry.forEach((value, i) => {
+        const name = rowData[i][0]
+        const feature = centers.find(el => el.name === name)
+        if (feature)
+          netPositions.push({ name, value, coords: feature.representative_point })
+        return fillExpression.push(rowData[i][0], colorScale(value))
       })
       fillExpression.push('rgb(255,255,255)')
 
       this.setState({
-        countriesPaint: { 'fill-opacity': 0.9, 'fill-color': fillExpression }
+        countriesPaint: { 'fill-opacity': 0.9, 'fill-color': fillExpression },
+        netPositions
       })
     }
   }
@@ -262,6 +273,7 @@ class MapRGL extends Component {
                 <Layer {...branchCircleLayer} />
                 <Layer {...branchArrowLayer} />
               </Source>
+              <Markers data={this.state.netPositions} />
               {this.renderPopup()}
             </>
           )}
