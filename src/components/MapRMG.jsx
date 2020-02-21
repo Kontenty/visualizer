@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import MapGL, { Source, Layer, Popup } from 'react-map-gl'
 import axios from 'axios'
 import _ from 'lodash'
@@ -6,32 +8,18 @@ import { interpolateOranges } from 'd3-scale-chromatic'
 import { scaleSequential } from 'd3-scale'
 import { geomEach } from '@turf/meta'
 import { point } from '@turf/helpers'
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 import Table from './Table'
 // import arrow from '../assets/arrow.svg'
-import { sumArrays } from '../helpers'
-
-/* const paint = {
-  'fill-color': 'rgba(200, 100, 240, 0.4)',
-  'fill-outline-color': 'rgba(200, 100, 240, 1)'
-} */
-
-/* [0, '#3288bd'],
-  [1, '#66c2a5'],
-  [2, '#abdda4'],
-  [3, '#e6f598'],
-  [4, '#ffffbf'],
-  [5, '#fee08b'],
-  [6, '#fdae61'],
-  [7, '#f46d43'],
-  [8, '#d53e4f'] */
+import { sumArrays, equalArrays } from '../helpers'
+import { toggleVisibility } from '../slices/branchDetailSlice'
 
 const countriesLineLayer = {
   id: 'lines',
   type: 'line',
   paint: {
     'line-color': '#888',
-    'line-dasharray': [3, 3],
     'line-width': 2
   }
 }
@@ -95,14 +83,15 @@ class MapRGL extends Component {
         pitch: 0
       },
       countriesPaint: {
-        'fill-color': '#65bbef',
+        'fill-color': '#ffffe6',
         // 'fill-outline-color': '#333',
         'fill-opacity': 0.5
       },
       euMapGeojson: null,
       branchesGeoData: null,
       showGeoJson: false,
-      popupInfo: null
+      popupInfo: null,
+      flowByCat: null
     }
   }
 
@@ -123,22 +112,60 @@ class MapRGL extends Component {
     return { ...geoData, features: [...geoData.features, ...pointFeatures] }
   }
 
+  fetchGeo = async () => {
+    try {
+      const res = await axios.all([
+        axios.get('./static/europe.geojson'),
+        axios.get('./static/20181130_1030.json')
+      ])
+      this.setState({
+        euMapGeojson: res[0].data,
+        branchesGeoData: this.addFeature(res[1].data),
+        showGeoJson: true
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   componentDidMount() {
-    ;(async () => {
-      try {
-        const res = await axios.all([
-          axios.get('./static/europe.geojson'),
-          axios.get('./static/20181130_1030.json')
-        ])
-        this.setState({
-          euMapGeojson: res[0].data,
-          branchesGeoData: this.addFeature(res[1].data),
-          showGeoJson: true
-        })
-      } catch (error) {
-        console.log(error)
-      }
-    })()
+    this.fetchGeo()
+  }
+
+  componentDidUpdate(prevProps) {
+    console.log(equalArrays(this.props.selectedCategories, prevProps.selectedCategories))
+    if (
+      this.state.popupInfo &&
+      !equalArrays(this.props.selectedCategories, prevProps.selectedCategories)
+    ) {
+      this.setZoneColor()
+    }
+  }
+
+  setZoneColor = () => {
+    const { selectedCategories } = this.props
+    const { rowData, columns } = this.state.popupInfo
+    const categoriesList = columns.slice(1)
+    const countOrNot = categoriesList.map(el => !!selectedCategories.includes(el))
+
+    if (selectedCategories.length > 0) {
+      const sumPerCountry = rowData.map(country =>
+        country[1].filter((_, i) => countOrNot[i]).reduce((sum, current) => sum + current)
+      )
+      const colorScale = scaleSequential(
+        [_.min(sumPerCountry), _.max(sumPerCountry)],
+        t => interpolateOranges(t)
+      )
+      const fillExpression = ['match', ['get', 'iso_a2']]
+      sumPerCountry.forEach((val, i) => {
+        return fillExpression.push(rowData[i][0], colorScale(val))
+      })
+      fillExpression.push('rgb(255,255,255)')
+
+      this.setState({
+        countriesPaint: { 'fill-opacity': 0.9, 'fill-color': fillExpression }
+      })
+    }
   }
 
   onHover = event => {
@@ -149,15 +176,17 @@ class MapRGL extends Component {
     const clicked = event.features[0]
 
     if (clicked) {
+      this.props.toggleVisibility()
       const { properties } = clicked
       const flows = JSON.parse(properties.flows)
-      const zones = JSON.parse(properties.zones)
-      const columns = ['Zone', ...Object.keys(flows)]
-      const flowValues = Object.values(flows)
-      const rowData = zones.map((zone, i) => [zone, this.getValue(flowValues, i)])
+      const zoneNames = JSON.parse(properties.zones)
+      const filteredCat = Object.keys(flows).filter(key => key !== 'Exchange flows [MW]')
+      const flowValues = filteredCat.map(key => flows[key])
+      const rowData = zoneNames.map((zone, i) => [zone, this.getValue(flowValues, i)])
       const countriesVals = rowData.map(el => el[1])
       const countriesTotals = sumArrays(countriesVals)
       const totalFlow = countriesTotals.reduce((sum, num) => sum + num)
+      const columns = ['Zone', ...filteredCat]
       const popupInfo = {
         lngLat: event.lngLat,
         properties,
@@ -166,22 +195,10 @@ class MapRGL extends Component {
         countriesTotals,
         totalFlow
       }
-      const colorScale = scaleSequential(
-        [_.min(countriesTotals), _.max(countriesTotals)],
-        t => interpolateOranges(t)
-      )
-      const fillExpression = ['match', ['get', 'iso_a2']]
-      countriesTotals.forEach((val, i) => {
-        console.log(val, colorScale(val))
-        return fillExpression.push(rowData[i][0], colorScale(val))
-      })
-      fillExpression.push('rgb(255,255,255)')
-      console.log('fillExpression', fillExpression)
 
-      this.setState({ popupInfo })
-      this.setState({
-        countriesPaint: { 'fill-opacity': 0.9, 'fill-color': fillExpression }
-      })
+      const flowByCat = filteredCat.map((cat, i) => [cat, flowValues[i]])
+
+      this.setState({ popupInfo, flowByCat })
     }
   }
 
@@ -198,10 +215,17 @@ class MapRGL extends Component {
         <Popup
           longitude={popupInfo.lngLat[0]}
           latitude={popupInfo.lngLat[1]}
-          onClose={() => this.setState({ popupInfo: null })}
+          onClose={() => {
+            this.setState({ popupInfo: null })
+            this.props.toggleVisibility()
+          }}
         >
-          <div>{properties['CB Type']}</div>
-          <Table columns={columns} rows={rowData} />
+          <div>
+            type: {properties['CB Type']} <br />
+            node 1: {properties['CB Node 1']} <br />
+            node 2: {properties['CB Node 2']}
+          </div>
+          {this.props.isTableVisible && <Table columns={columns} rows={rowData} />}
         </Popup>
       )
     }
@@ -216,12 +240,13 @@ class MapRGL extends Component {
           {...viewport}
           width='100%'
           height='100%'
-          mapStyle='mapbox://styles/mapbox/light-v9'
+          mapStyle={`mapbox://styles/mapbox/${this.props.mapboxStyle}`}
           clickRadius={3}
           onViewportChange={viewport => this.setState({ viewport })}
           mapboxApiAccessToken='pk.eyJ1Ijoia29udGVudHkiLCJhIjoiY2s1NnZlaHBhMDdyZDNmcGd2MGZiMXF6aCJ9.2VrHuqCEQVaI8dJqicq1Ug'
           // onHover={this.onHover}
           onClick={this.onClick}
+          // onLoad={e => console.log(e)}
           interactiveLayerIds={['branchLine']}
         >
           {showGeoJson && (
@@ -231,7 +256,7 @@ class MapRGL extends Component {
                   id='data'
                   type='fill'
                   paint={this.state.countriesPaint}
-                  beforeId='waterway-label'
+                  beforeId='state-label'
                 />
                 <Layer {...countriesLineLayer} />
               </Source>
@@ -248,5 +273,18 @@ class MapRGL extends Component {
     )
   }
 }
+function mapStateToProps({ mapStyle, branchDetailSlice }) {
+  return {
+    mapboxStyle: mapStyle.mapboxStyle,
+    isTableVisible: branchDetailSlice.isTableVisible,
+    selectedCategories: branchDetailSlice.selectedCategories
+  }
+}
+export default connect(mapStateToProps, { toggleVisibility })(MapRGL)
 
-export default MapRGL
+MapRGL.propTypes = {
+  mapboxStyle: PropTypes.string.isRequired,
+  toggleVisibility: PropTypes.func.isRequired,
+  isTableVisible: PropTypes.bool.isRequired,
+  selectedCategories: PropTypes.array.isRequired
+}

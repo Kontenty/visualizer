@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit'
 
 export const mapState = {
-  mapboxStyle: 'streets-v10'
+  mapboxStyle: 'light-v10'
 }
 
 const mapStyle = createReducer(mapState, {

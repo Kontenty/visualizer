@@ -6,6 +6,7 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import MapRGL from './MapRMG'
 import NavBar from './NavBar'
 import SideBar from './SideBar'
+import MapStyleToggle from './MapStyleToggle'
 
 const drawerWidth = 240
 
@@ -49,6 +50,7 @@ const App = () => {
         </div> */}
         <div className={classes.mapWrapper}>
           <MapRGL />
+          <MapStyleToggle />
         </div>
       </main>
     </>

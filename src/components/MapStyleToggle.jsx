@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import { Fab, Button } from '@material-ui/core'
 import MapOutlinedIcon from '@material-ui/icons/MapOutlined'
 import styled from 'styled-components'
 import { Transition } from 'react-transition-group'
+
+import { setMapboxStyle } from '../actions'
 
 const StyleD = styled.div`
   display: grid;
@@ -26,11 +29,17 @@ const StyleD = styled.div`
     transition-delay: 300ms;
   }
 `
+const TopRight = styled.div`
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  text-align: right;
+`
 
-const MapStyleToggle = ({ onClick }) => {
+const MapStyleToggle = ({ setMapboxStyle }) => {
   const [show, setShow] = useState(false)
   return (
-    <>
+    <TopRight>
       <Fab
         color='primary'
         size='small'
@@ -46,7 +55,7 @@ const MapStyleToggle = ({ onClick }) => {
               size='small'
               variant='contained'
               color='primary'
-              onClick={() => onClick('light-v10')}
+              onClick={() => setMapboxStyle('light-v10')}
             >
               light
             </Button>
@@ -54,27 +63,27 @@ const MapStyleToggle = ({ onClick }) => {
               size='small'
               variant='contained'
               color='primary'
-              onClick={() => onClick('dark-v10')}
+              onClick={() => setMapboxStyle('dark-v10')}
             >
               dark
             </Button>
-            <Button
+            {/* <Button
               size='small'
               variant='contained'
               color='primary'
-              onClick={() => onClick('streets-v10')}
+              onClick={() => setMapboxStyle('streets-v10')}
             >
               streets
-            </Button>
+            </Button> */}
           </StyleD>
         )}
       </Transition>
-    </>
+    </TopRight>
   )
 }
 
-export default MapStyleToggle
+export default connect(null, { setMapboxStyle })(MapStyleToggle)
 
 MapStyleToggle.propTypes = {
-  onClick: PropTypes.func.isRequired
+  setMapboxStyle: PropTypes.func.isRequired
 }

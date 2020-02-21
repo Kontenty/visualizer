@@ -1,8 +1,11 @@
 import React from 'react'
-// import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
 import { Drawer, Fab } from '@material-ui/core'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
+
+import BranchDetailControl from './BranchDetailControl'
 
 const drawerWidth = 240
 
@@ -36,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 // --- component function
-const SideBar = () => {
+const SideBar = ({ showSelector }) => {
   const classes = useStyles()
 
   return (
@@ -68,8 +71,19 @@ const SideBar = () => {
           </Fab>
         </label>
       </div>
+      {showSelector && <BranchDetailControl />}
     </Drawer>
   )
 }
 
-export default SideBar
+function mapStateToProps({ branchDetailSlice }) {
+  return {
+    showSelector: branchDetailSlice.isVisible
+  }
+}
+
+export default connect(mapStateToProps)(SideBar)
+
+SideBar.propTypes = {
+  showSelector: PropTypes.bool.isRequired
+}

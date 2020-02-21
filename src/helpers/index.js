@@ -12,3 +12,10 @@ export function sumArraysAcross(...arrays) {
 export function sumArrays(arrays) {
   return arrays.map(arr => arr.reduce((sum, current) => roundTo(sum + current)))
 }
+
+export function equalArrays(arr1, arr2) {
+  if (!arr1 || !arr2) return
+  if (arr1.length !== arr2.length) return false
+
+  return arr1.every((el, index) => el === arr2[index])
+}
