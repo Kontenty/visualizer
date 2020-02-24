@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
+  branchName: '',
   isVisible: true,
   isTableVisible: false,
   columns: [
@@ -17,6 +18,9 @@ const branchDetailSlice = createSlice({
   name: 'branchData',
   initialState,
   reducers: {
+    setBranchName(state, action) {
+      state.branchName = action.payload
+    },
     toggleVisibility(state) {
       state.isVisible = !state.isVisible
     },

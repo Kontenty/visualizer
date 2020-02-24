@@ -15,7 +15,8 @@ import Markers from './Markers'
 
 // import arrow from '../assets/arrow.svg'
 import { sumArrays, equalArrays } from '../helpers'
-import { toggleVisibility } from '../slices/branchDetailSlice'
+import { toggleVisibility, showTable } from '../slices/branchDetailSlice'
+import Modal from './Modal'
 import centers from '../assets/zoneCenters.json'
 
 const countriesLineLayer = {
@@ -217,7 +218,7 @@ class MapRGL extends Component {
   renderPopup() {
     const { popupInfo, showPopup } = this.state
     if (showPopup) {
-      const { properties, columns, rowData } = popupInfo
+      const { properties } = popupInfo
 
       return (
         <Popup
@@ -230,10 +231,8 @@ class MapRGL extends Component {
         >
           <div>
             type: {properties['CB Type']} <br />
-            node 1: {properties['CB Node 1']} <br />
-            node 2: {properties['CB Node 2']}
+            {properties['CB Node 1']} - {properties['CB Node 2']}
           </div>
-          {this.props.isTableVisible && <Table columns={columns} rows={rowData} />}
         </Popup>
       )
     }
@@ -241,7 +240,8 @@ class MapRGL extends Component {
   }
 
   render() {
-    const { viewport, euMapGeojson, branchesGeoData, showGeoJson } = this.state
+    const { viewport, euMapGeojson, branchesGeoData, showGeoJson, popupInfo } = this.state
+
     return (
       <>
         <MapGL
@@ -278,6 +278,9 @@ class MapRGL extends Component {
             </>
           )}
         </MapGL>
+        <Modal open={this.props.isTableVisible} close={() => this.props.showTable()}>
+          {popupInfo && <Table columns={popupInfo.columns} rows={popupInfo.rowData} />}
+        </Modal>
       </>
     )
   }
@@ -289,11 +292,12 @@ function mapStateToProps({ mapStyle, branchDetailSlice }) {
     selectedCategories: branchDetailSlice.selectedCategories
   }
 }
-export default connect(mapStateToProps, { toggleVisibility })(MapRGL)
+export default connect(mapStateToProps, { toggleVisibility, showTable })(MapRGL)
 
 MapRGL.propTypes = {
   mapboxStyle: PropTypes.string.isRequired,
-  toggleVisibility: PropTypes.func.isRequired,
   isTableVisible: PropTypes.bool.isRequired,
-  selectedCategories: PropTypes.array.isRequired
+  selectedCategories: PropTypes.array.isRequired,
+  toggleVisibility: PropTypes.func.isRequired,
+  showTable: PropTypes.func.isRequired
 }
