@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, withStyles } from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
@@ -59,6 +59,16 @@ const headCells = [
   { id: 'zone_total', numeric: true, disablePadding: false, label: 'Zone total [MW]' }
 ]
 
+const StyledTableCell = withStyles(theme => ({
+  head: {
+    backgroundColor: '#e3f2fd'
+    // color: theme.palette.common.white
+  },
+  body: {
+    fontSize: 14
+  }
+}))(TableCell)
+
 function EnhancedTableHead(props) {
   const { classes, order, orderBy, onRequestSort, additionalRow } = props
   const createSortHandler = property => event => {
@@ -92,13 +102,13 @@ function EnhancedTableHead(props) {
       </TableRow>
       <TableRow>
         {additionalRow.map((cell, i) => (
-          <TableCell
+          <StyledTableCell
             align={i === 0 ? 'left' : 'right'}
             padding={i === 0 ? 'none' : 'default'}
             key={'cell' + i}
           >
             {cell}
-          </TableCell>
+          </StyledTableCell>
         ))}
       </TableRow>
     </TableHead>
