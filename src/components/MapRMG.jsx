@@ -15,7 +15,7 @@ import Table from './TableSortable'
 import Markers from './Markers'
 
 // import arrow from '../assets/arrow.svg'
-import { sumArrays, equalArrays } from '../helpers'
+import { sumArrays, equalArrays, roundTo } from '../helpers'
 import { toggleVisibility, showTable, setBranchName } from '../slices/branchDetailSlice'
 import Modal from './Modal'
 import centers from '../assets/zoneCenters.json'
@@ -196,32 +196,35 @@ class MapRGL extends Component {
       const flowValues = filteredCat.map(key => flows[key])
       const rowData = zoneNames.map((zone, i) => [zone, this.getValue(flowValues, i)])
       const countriesVals = rowData.map(el => el[1])
+      // console.log(countriesVals)
       const countriesTotals = sumArrays(countriesVals)
-      const totalFlow = countriesTotals.reduce((sum, num) => sum + num)
-      /* const shortNames = [
-        'name',
-        'internal_flow',
-        'loop_flow',
-        'impex_flow',
-        'transit_flow',
-        'pst_flow'
-      ] */
-      const columns = ['Zone', ...filteredCat]
-      const rowsForSort = rowData.map(row => ({
+
+      const totalFlow = roundTo(countriesTotals.reduce((sum, num) => sum + num))
+
+      const columns = ['Zone', ...filteredCat, 'Zone total']
+      const rowsForSort = rowData.map((row, index) => ({
         name: row[0],
         internal_flow: row[1][0],
         loop_flow: row[1][1],
         impex_flow: row[1][2],
         transit_flow: row[1][3],
-        pst_flow: row[1][4]
+        pst_flow: row[1][4],
+        zone_total: countriesTotals[index]
       }))
 
-      console.log(rowsForSort)
-      console.log(rowData)
+      const headRow = [
+        'Category total',
+        ...countriesVals.reduce((sum, cur) => cur.map((el, i) => roundTo(sum[i] + el))),
+        totalFlow
+      ]
+
+      // console.log(rowsForSort)
+      // console.log(rowData)
       const popupInfo = {
         lngLat: event.lngLat,
         properties,
         columns,
+        headRow,
         rowData,
         countriesTotals,
         totalFlow,
@@ -299,7 +302,11 @@ class MapRGL extends Component {
           {popupInfo && (
             <>
               <p>{this.props.branchName}</p>
-              <Table columns={popupInfo.columns} rows={popupInfo.rowsForSort} />
+              <Table
+                columns={popupInfo.columns}
+                rows={popupInfo.rowsForSort}
+                headRow={popupInfo.headRow}
+              />
             </>
           )}
         </Modal>

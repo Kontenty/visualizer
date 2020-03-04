@@ -5,7 +5,7 @@ export function roundTo(num, n = 2) {
 export function sumArraysAcross(...arrays) {
   const n = arrays.reduce((max, xs) => Math.max(max, xs.length), 0)
   const result = Array.from({ length: n })
-  result.map((_, i) => console.log(i))
+  console.log(arrays)
   return result.map((_, i) => arrays.map(xs => xs[i] || 0).reduce((sum, x) => sum + x, 0))
 }
 

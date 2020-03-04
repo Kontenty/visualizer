@@ -55,11 +55,12 @@ const headCells = [
     disablePadding: false,
     label: 'Transit flows [MW]'
   },
-  { id: 'pst_flow', numeric: true, disablePadding: false, label: 'PST flows [MW]' }
+  { id: 'pst_flow', numeric: true, disablePadding: false, label: 'PST flows [MW]' },
+  { id: 'zone_total', numeric: true, disablePadding: false, label: 'Zone total [MW]' }
 ]
 
 function EnhancedTableHead(props) {
-  const { classes, order, orderBy, onRequestSort } = props
+  const { classes, order, orderBy, onRequestSort, additionalRow } = props
   const createSortHandler = property => event => {
     onRequestSort(event, property)
   }
@@ -89,6 +90,17 @@ function EnhancedTableHead(props) {
           </TableCell>
         ))}
       </TableRow>
+      <TableRow>
+        {additionalRow.map((cell, i) => (
+          <TableCell
+            align={i === 0 ? 'left' : 'right'}
+            padding={i === 0 ? 'none' : 'default'}
+            key={'cell' + i}
+          >
+            {cell}
+          </TableCell>
+        ))}
+      </TableRow>
     </TableHead>
   )
 }
@@ -97,7 +109,8 @@ EnhancedTableHead.propTypes = {
   classes: PropTypes.object.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  orderBy: PropTypes.string.isRequired
+  orderBy: PropTypes.string.isRequired,
+  additionalRow: PropTypes.array
 }
 
 const useStyles = makeStyles(theme => ({
@@ -109,7 +122,10 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2)
   },
   table: {
-    minWidth: 500
+    minWidth: 500,
+    '& .MuiTableCell-sizeSmall': {
+      padding: '5px 12px 5px 8px'
+    }
   },
   visuallyHidden: {
     border: 0,
@@ -124,7 +140,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function EnhancedTable({ rows }) {
+export default function EnhancedTable({ rows, headRow }) {
   const classes = useStyles()
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('calories')
@@ -151,6 +167,7 @@ export default function EnhancedTable({ rows }) {
             orderBy={orderBy}
             onRequestSort={handleRequestSort}
             rowCount={rows.length}
+            additionalRow={headRow}
           />
           <TableBody>
             {stableSort(rows, getComparator(order, orderBy)).map((row, index) => {
@@ -186,5 +203,6 @@ export default function EnhancedTable({ rows }) {
 }
 
 EnhancedTable.propTypes = {
-  rows: PropTypes.array.isRequired
+  rows: PropTypes.array.isRequired,
+  headRow: PropTypes.array
 }
