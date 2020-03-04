@@ -7,21 +7,30 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  ListSubheader,
   // ListItemSecondaryAction,
   Checkbox,
-  Button
+  Button,
+  Typography
 } from '@material-ui/core'
 
 import { showTable, selectZone } from '../slices/branchDetailSlice'
 
 const useStyles = makeStyles({
+  root: {
+    marginTop: '1rem'
+  },
   checkBox: {
     padding: '3px 9px'
   }
 })
 
-const BranchDetailControl = ({ options, showTable, isTableVisible, selectZone }) => {
+const BranchDetailControl = ({
+  branchName,
+  options,
+  showTable,
+  isTableVisible,
+  selectZone
+}) => {
   const classes = useStyles()
   const [checked, setChecked] = React.useState([])
 
@@ -40,15 +49,15 @@ const BranchDetailControl = ({ options, showTable, isTableVisible, selectZone })
   }
 
   return (
-    <div>
-      <List
-        disablePadding
-        subheader={
-          <ListSubheader component='div' id='nested-list-subheader'>
-            Select flow type
-          </ListSubheader>
-        }
-      >
+    <div className={classes.root}>
+      <Typography variant='h6' align='center'>
+        {branchName}
+      </Typography>
+      <Typography variant='subtitle1' align='center'>
+        {' '}
+        Select flow type
+      </Typography>
+      <List disablePadding>
         {options.map(option => (
           <ListItem
             key={option}
@@ -84,13 +93,15 @@ const BranchDetailControl = ({ options, showTable, isTableVisible, selectZone })
 function mapStateToProps({ branchDetailSlice }) {
   return {
     options: branchDetailSlice.columns,
-    isTableVisible: branchDetailSlice.isTableVisible
+    isTableVisible: branchDetailSlice.isTableVisible,
+    branchName: branchDetailSlice.branchName
   }
 }
 
 export default connect(mapStateToProps, { showTable, selectZone })(BranchDetailControl)
 
 BranchDetailControl.propTypes = {
+  branchName: PropTypes.string.isRequired,
   options: PropTypes.array.isRequired,
   isTableVisible: PropTypes.bool.isRequired,
   showTable: PropTypes.func.isRequired,

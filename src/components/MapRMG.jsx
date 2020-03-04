@@ -10,12 +10,13 @@ import { geomEach } from '@turf/meta'
 import { point } from '@turf/helpers'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
-import Table from './Table'
+// import Table from './Table'
+import Table from './TableSortable'
 import Markers from './Markers'
 
 // import arrow from '../assets/arrow.svg'
 import { sumArrays, equalArrays } from '../helpers'
-import { toggleVisibility, showTable } from '../slices/branchDetailSlice'
+import { toggleVisibility, showTable, setBranchName } from '../slices/branchDetailSlice'
 import Modal from './Modal'
 import centers from '../assets/zoneCenters.json'
 
@@ -197,16 +198,37 @@ class MapRGL extends Component {
       const countriesVals = rowData.map(el => el[1])
       const countriesTotals = sumArrays(countriesVals)
       const totalFlow = countriesTotals.reduce((sum, num) => sum + num)
+      /* const shortNames = [
+        'name',
+        'internal_flow',
+        'loop_flow',
+        'impex_flow',
+        'transit_flow',
+        'pst_flow'
+      ] */
       const columns = ['Zone', ...filteredCat]
+      const rowsForSort = rowData.map(row => ({
+        name: row[0],
+        internal_flow: row[1][0],
+        loop_flow: row[1][1],
+        impex_flow: row[1][2],
+        transit_flow: row[1][3],
+        pst_flow: row[1][4]
+      }))
+
+      console.log(rowsForSort)
+      console.log(rowData)
       const popupInfo = {
         lngLat: event.lngLat,
         properties,
         columns,
         rowData,
         countriesTotals,
-        totalFlow
+        totalFlow,
+        rowsForSort
       }
 
+      this.props.setBranchName(`${properties['CB Node 1']} - ${properties['CB Node 2']}`)
       this.setState({ popupInfo, showPopup: true })
     }
   }
@@ -260,12 +282,7 @@ class MapRGL extends Component {
           {showGeoJson && (
             <>
               <Source type='geojson' data={euMapGeojson}>
-                <Layer
-                  id='data'
-                  type='fill'
-                  paint={this.state.countriesPaint}
-                  beforeId='state-label'
-                />
+                <Layer id='data' type='fill' paint={this.state.countriesPaint} />
                 <Layer {...countriesLineLayer} />
               </Source>
               <Source type='geojson' data={branchesGeoData}>
@@ -279,7 +296,12 @@ class MapRGL extends Component {
           )}
         </MapGL>
         <Modal open={this.props.isTableVisible} close={() => this.props.showTable()}>
-          {popupInfo && <Table columns={popupInfo.columns} rows={popupInfo.rowData} />}
+          {popupInfo && (
+            <>
+              <p>{this.props.branchName}</p>
+              <Table columns={popupInfo.columns} rows={popupInfo.rowsForSort} />
+            </>
+          )}
         </Modal>
       </>
     )
@@ -289,15 +311,20 @@ function mapStateToProps({ mapStyle, branchDetailSlice }) {
   return {
     mapboxStyle: mapStyle.mapboxStyle,
     isTableVisible: branchDetailSlice.isTableVisible,
-    selectedCategories: branchDetailSlice.selectedCategories
+    selectedCategories: branchDetailSlice.selectedCategories,
+    branchName: branchDetailSlice.branchName
   }
 }
-export default connect(mapStateToProps, { toggleVisibility, showTable })(MapRGL)
+export default connect(mapStateToProps, { toggleVisibility, showTable, setBranchName })(
+  MapRGL
+)
 
 MapRGL.propTypes = {
   mapboxStyle: PropTypes.string.isRequired,
+  branchName: PropTypes.string.isRequired,
   isTableVisible: PropTypes.bool.isRequired,
   selectedCategories: PropTypes.array.isRequired,
   toggleVisibility: PropTypes.func.isRequired,
+  setBranchName: PropTypes.func.isRequired,
   showTable: PropTypes.func.isRequired
 }

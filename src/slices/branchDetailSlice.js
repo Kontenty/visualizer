@@ -33,6 +33,11 @@ const branchDetailSlice = createSlice({
   }
 })
 
-export const { toggleVisibility, showTable, selectZone } = branchDetailSlice.actions
+export const {
+  toggleVisibility,
+  showTable,
+  selectZone,
+  setBranchName
+} = branchDetailSlice.actions
 
 export default branchDetailSlice.reducer
