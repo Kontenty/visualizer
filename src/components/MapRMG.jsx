@@ -149,6 +149,16 @@ class MapRGL extends Component {
 
   setZoneColor = () => {
     const { selectedCategories } = this.props
+    if (selectedCategories.length === 0) {
+      this.setState({
+        countriesPaint: {
+          'fill-color': '#ffffe6',
+          'fill-opacity': 0.5
+        },
+        netPositions: null
+      })
+      return
+    }
     const { rowData, columns } = this.state.popupInfo
     const categoriesList = columns.slice(1)
     const countOrNot = categoriesList.map(el => !!selectedCategories.includes(el))

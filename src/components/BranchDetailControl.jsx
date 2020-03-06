@@ -3,15 +3,21 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
 import {
+  Divider,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  // ListItemSecondaryAction,
-  Checkbox,
+  ListItemSecondaryAction,
   Button,
+  Switch,
   Typography
 } from '@material-ui/core'
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows'
+import CallMadeIcon from '@material-ui/icons/CallMade'
+import LoopIcon from '@material-ui/icons/Loop'
+import ShuffleIcon from '@material-ui/icons/Shuffle'
+import TuneIcon from '@material-ui/icons/Tune'
 
 import { showTable, selectZone } from '../slices/branchDetailSlice'
 
@@ -21,8 +27,20 @@ const useStyles = makeStyles({
   },
   checkBox: {
     padding: '3px 9px'
+  },
+  listIcon: {
+    minWidth: '10px',
+    marginRight: '16px'
   }
 })
+
+const switchListIcons = [
+  <CallMadeIcon key='ic1' />,
+  <LoopIcon key='ic2' />,
+  <CompareArrowsIcon key='ic3' />,
+  <ShuffleIcon key='ic4' />,
+  <TuneIcon key='ic5' />
+]
 
 const BranchDetailControl = ({
   branchName,
@@ -57,32 +75,26 @@ const BranchDetailControl = ({
         {' '}
         Select flow type
       </Typography>
-      <List disablePadding>
-        {options.map(option => (
-          <ListItem
-            key={option}
-            role={undefined}
-            dense
-            button
-            onClick={handleToggle(option)}
-          >
-            <ListItemIcon>
-              <Checkbox
-                edge='start'
-                checked={checked.indexOf(option) !== -1}
-                tabIndex={-1}
-                disableRipple
-                inputProps={{ 'aria-labelledby': `checkbox-list-label-${option}` }}
-                className={classes.checkBox}
-              />
+      <Divider />
+      <List>
+        {options.map((option, index) => (
+          <ListItem button dense key={option} onClick={handleToggle(option)}>
+            <ListItemIcon className={classes.listIcon}>
+              {switchListIcons[index]}
             </ListItemIcon>
-            <ListItemText
-              id={`checkbox-list-label-${option}`}
-              primary={option.replace(' [MW]', '')}
-            />
+            <ListItemText primary={option} />
+            <ListItemSecondaryAction>
+              <Switch
+                edge='end'
+                checked={checked.indexOf(option) !== -1}
+                onChange={handleToggle(option)}
+                value={option}
+              />
+            </ListItemSecondaryAction>
           </ListItem>
         ))}
       </List>
+      <Divider />
       <Button variant='outlined' onClick={() => showTable()}>
         {isTableVisible ? 'Hide table' : 'Show branch table'}
       </Button>

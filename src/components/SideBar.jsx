@@ -7,7 +7,7 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 
 import BranchDetailControl from './BranchDetailControl'
 
-const drawerWidth = 240
+const drawerWidth = 290
 
 const useStyles = makeStyles(theme => ({
   root: {
