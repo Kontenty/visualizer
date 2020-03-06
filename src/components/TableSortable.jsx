@@ -69,6 +69,17 @@ const StyledTableCell = withStyles(theme => ({
   }
 }))(TableCell)
 
+const StyledHeadCell = withStyles(theme => ({
+  head: {
+    backgroundColor: theme.palette.grey[100],
+    fontWeight: 600
+    // color: theme.palette.common.white
+  },
+  body: {
+    fontSize: 14
+  }
+}))(TableCell)
+
 function EnhancedTableHead(props) {
   const { classes, order, orderBy, onRequestSort, additionalRow } = props
   const createSortHandler = property => event => {
@@ -79,7 +90,7 @@ function EnhancedTableHead(props) {
     <TableHead>
       <TableRow>
         {headCells.map(headCell => (
-          <TableCell
+          <StyledHeadCell
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
             padding={headCell.disablePadding ? 'none' : 'default'}
@@ -89,6 +100,7 @@ function EnhancedTableHead(props) {
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
               onClick={createSortHandler(headCell.id)}
+              className={classes.sortLabel}
             >
               {headCell.label}
               {orderBy === headCell.id ? (
@@ -97,7 +109,7 @@ function EnhancedTableHead(props) {
                 </span>
               ) : null}
             </TableSortLabel>
-          </TableCell>
+          </StyledHeadCell>
         ))}
       </TableRow>
       <TableRow>
@@ -138,6 +150,9 @@ const useStyles = makeStyles(theme => ({
       padding: '5px 12px 5px 8px'
     }
   },
+  summaryCell: {
+    backgroundColor: '#e3f2fd'
+  },
   visuallyHidden: {
     border: 0,
     clip: 'rect(0 0 0 0)',
@@ -148,10 +163,11 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     top: 20,
     width: 1
-  }
+  },
+  sortLabel: {}
 }))
 
-export default function EnhancedTable({ rows, headRow }) {
+const EnhancedTable = ({ rows, headRow }) => {
   const classes = useStyles()
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('calories')
@@ -186,23 +202,36 @@ export default function EnhancedTable({ rows, headRow }) {
 
               return (
                 <TableRow hover tabIndex={-1} key={row.name}>
-                  {Object.keys(row).map((key, i) =>
-                    i === 0 ? (
-                      <TableCell
-                        key={index + key}
-                        component='th'
-                        id={labelId}
-                        scope='row'
-                        padding='none'
-                      >
-                        {row.name}
-                      </TableCell>
-                    ) : (
+                  {Object.keys(row).map((key, i) => {
+                    if (i === 0) {
+                      return (
+                        <TableCell
+                          key={index + key}
+                          component='th'
+                          id={labelId}
+                          scope='row'
+                          padding='none'
+                        >
+                          {row.name}
+                        </TableCell>
+                      )
+                    } else if (i === Object.keys(row).length - 1) {
+                      return (
+                        <TableCell
+                          key={index + key}
+                          align='right'
+                          className={classes.summaryCell}
+                        >
+                          {row[key]}
+                        </TableCell>
+                      )
+                    }
+                    return (
                       <TableCell key={index + key} align='right'>
                         {row[key]}
                       </TableCell>
                     )
-                  )}
+                  })}
                 </TableRow>
               )
             })}
@@ -212,6 +241,8 @@ export default function EnhancedTable({ rows, headRow }) {
     </div>
   )
 }
+
+export default React.memo(EnhancedTable)
 
 EnhancedTable.propTypes = {
   rows: PropTypes.array.isRequired,

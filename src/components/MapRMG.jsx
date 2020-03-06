@@ -90,7 +90,7 @@ class MapRGL extends Component {
       countriesPaint: {
         'fill-color': '#ffffe6',
         // 'fill-outline-color': '#333',
-        'fill-opacity': 0.5
+        'fill-opacity': 0.4
       },
       euMapGeojson: null,
       branchesGeoData: null,
@@ -153,7 +153,7 @@ class MapRGL extends Component {
       this.setState({
         countriesPaint: {
           'fill-color': '#ffffe6',
-          'fill-opacity': 0.5
+          'fill-opacity': 0.4
         },
         netPositions: null
       })
@@ -184,7 +184,7 @@ class MapRGL extends Component {
       fillExpression.push('rgb(255,255,255)')
 
       this.setState({
-        countriesPaint: { 'fill-opacity': 0.9, 'fill-color': fillExpression },
+        countriesPaint: { 'fill-opacity': 0.95, 'fill-color': fillExpression },
         netPositions
       })
     }
