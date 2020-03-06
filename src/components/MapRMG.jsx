@@ -13,11 +13,11 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 // import Table from './Table'
 import Table from './TableSortable'
 import Markers from './Markers'
+import RightBar from './RightBar'
 
 // import arrow from '../assets/arrow.svg'
 import { sumArrays, equalArrays, roundTo } from '../helpers'
 import { toggleVisibility, showTable, setBranchName } from '../slices/branchDetailSlice'
-import Modal from './Modal'
 import centers from '../assets/zoneCenters.json'
 
 const countriesLineLayer = {
@@ -298,7 +298,7 @@ class MapRGL extends Component {
             </>
           )}
         </MapGL>
-        <Modal open={this.props.isTableVisible} close={() => this.props.showTable()}>
+        <RightBar isOpen={this.props.isTableVisible} close={() => this.props.showTable()}>
           {popupInfo && (
             <>
               <p>{this.props.branchName}</p>
@@ -309,7 +309,7 @@ class MapRGL extends Component {
               />
             </>
           )}
-        </Modal>
+        </RightBar>
       </>
     )
   }

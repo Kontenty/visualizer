@@ -50,9 +50,7 @@ const App = () => {
       <SideBar />
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        {/* <div className={classes.mapWrapper}>
-          <Map />
-        </div> */}
+
         <div className={classes.mapWrapper}>
           <MapRGL />
           <MapStyleToggle />
