@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import MapGL, { Source, Layer, Popup } from 'react-map-gl'
 import axios from 'axios'
 import _ from 'lodash'
+import Chip from '@material-ui/core/Chip'
+import Avatar from '@material-ui/core/Avatar'
 import { interpolateOranges } from 'd3-scale-chromatic'
 import { scaleSequential } from 'd3-scale'
 import { geomEach } from '@turf/meta'
@@ -311,7 +313,23 @@ class MapRGL extends Component {
         <RightBar isOpen={this.props.isTableVisible} close={() => this.props.showTable()}>
           {popupInfo && (
             <>
-              <p>{this.props.branchName}</p>
+              <div style={{ margin: '3px 2px' }}>
+                <Chip
+                  avatar={<Avatar>B</Avatar>}
+                  label={`branch - ${this.props.branchName}`}
+                  color='primary'
+                  // deleteIcon={<DoneIcon />}
+                  variant='outlined'
+                  style={{ marginRight: '5px' }}
+                />
+                <Chip
+                  avatar={<Avatar>T</Avatar>}
+                  label={`total flow - ${popupInfo.totalFlow}`}
+                  color='primary'
+                  // deleteIcon={<DoneIcon />}
+                  variant='outlined'
+                />
+              </div>
               <Table
                 columns={popupInfo.columns}
                 rows={popupInfo.rowsForSort}

@@ -31,6 +31,11 @@ const useStyles = makeStyles({
   listIcon: {
     minWidth: '10px',
     marginRight: '16px'
+  },
+  btnWrap: {
+    display: 'flex',
+    justifyContent: 'center',
+    margin: '5px 0'
   }
 })
 
@@ -95,9 +100,11 @@ const BranchDetailControl = ({
         ))}
       </List>
       <Divider />
-      <Button variant='outlined' onClick={() => showTable()}>
-        {isTableVisible ? 'Hide table' : 'Show branch table'}
-      </Button>
+      <div className={classes.btnWrap}>
+        <Button variant='outlined' onClick={() => showTable()}>
+          {isTableVisible ? 'Hide table' : 'Show branch table'}
+        </Button>
+      </div>
     </div>
   )
 }

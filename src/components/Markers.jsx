@@ -12,6 +12,8 @@ const Markers = ({ data }) => {
           longitude={netPos.coords[0]}
           latitude={netPos.coords[1]}
         >
+          {netPos.name}
+          <br />
           {roundTo(netPos.value)}
         </Marker>
       ))
