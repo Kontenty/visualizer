@@ -1,3 +1,5 @@
+import { geomEach, point } from '@turf/turf'
+
 export function roundTo(num, n = 2) {
   return Math.round(num * 10 ** n) / 10 ** n
 }
@@ -18,4 +20,21 @@ export function equalArrays(arr1, arr2) {
   if (arr1.length !== arr2.length) return false
 
   return arr1.every((el, index) => el === arr2[index])
+}
+
+export function addFeature(geoData) {
+  const pointFeatures = []
+  geomEach(geoData, (currentGeometry, featureIndex, featureProperties) => {
+    pointFeatures.push(
+      point(currentGeometry.coordinates[0], {
+        node: featureProperties['CB Node 1']
+      })
+    )
+    pointFeatures.push(
+      point(currentGeometry.coordinates[1], {
+        node: featureProperties['CB Node 2']
+      })
+    )
+  })
+  return { ...geoData, features: [...geoData.features, ...pointFeatures] }
 }

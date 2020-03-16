@@ -2,20 +2,21 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import MapGL, { Source, Layer, Popup } from 'react-map-gl'
-import axios from 'axios'
+// import axios from 'axios'
 import _ from 'lodash'
 import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
 import { interpolateOranges } from 'd3-scale-chromatic'
 import { scaleSequential } from 'd3-scale'
-import { geomEach } from '@turf/meta'
-import { point } from '@turf/helpers'
+// import { geomEach } from '@turf/meta'
+// import { point } from '@turf/helpers'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
 // import Table from './Table'
 import Table from './TableSortable'
 import Markers from './Markers'
 import RightBar from './RightBar'
+import { fetchGeoData } from '../slices/geoDataSlice'
 
 // import arrow from '../assets/arrow.svg'
 import { sumArrays, equalArrays, roundTo } from '../helpers'
@@ -94,50 +95,14 @@ class MapRGL extends Component {
         // 'fill-outline-color': '#333',
         'fill-opacity': 0.4
       },
-      euMapGeojson: null,
-      branchesGeoData: null,
-      showGeoJson: false,
       popupInfo: null,
       showPopup: false,
       netPositions: null
     }
   }
 
-  addFeature = geoData => {
-    const pointFeatures = []
-    geomEach(geoData, (currentGeometry, featureIndex, featureProperties) => {
-      pointFeatures.push(
-        point(currentGeometry.coordinates[0], {
-          node: featureProperties['CB Node 1']
-        })
-      )
-      pointFeatures.push(
-        point(currentGeometry.coordinates[1], {
-          node: featureProperties['CB Node 2']
-        })
-      )
-    })
-    return { ...geoData, features: [...geoData.features, ...pointFeatures] }
-  }
-
-  fetchGeo = async () => {
-    try {
-      const res = await axios.all([
-        axios.get('./static/europe.geojson'),
-        axios.get('./static/20181130_1030.json')
-      ])
-      this.setState({
-        euMapGeojson: res[0].data,
-        branchesGeoData: this.addFeature(res[1].data),
-        showGeoJson: true
-      })
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   componentDidMount() {
-    this.fetchGeo()
+    this.props.fetchGeoData()
   }
 
   componentDidUpdate(prevProps) {
@@ -277,7 +242,8 @@ class MapRGL extends Component {
   }
 
   render() {
-    const { viewport, euMapGeojson, branchesGeoData, showGeoJson, popupInfo } = this.state
+    const { viewport, popupInfo } = this.state
+    const { euMap, branchGeo, geoDataReady } = this.props
 
     return (
       <>
@@ -294,13 +260,13 @@ class MapRGL extends Component {
           // onLoad={e => console.log(e)}
           interactiveLayerIds={['branchLine']}
         >
-          {showGeoJson && (
+          {geoDataReady && (
             <>
-              <Source type='geojson' data={euMapGeojson}>
+              <Source type='geojson' data={euMap}>
                 <Layer id='data' type='fill' paint={this.state.countriesPaint} />
                 <Layer {...countriesLineLayer} />
               </Source>
-              <Source type='geojson' data={branchesGeoData}>
+              <Source type='geojson' data={branchGeo}>
                 <Layer {...branchLineLayer} />
                 <Layer {...branchCircleLayer} />
                 <Layer {...branchArrowLayer} />
@@ -342,17 +308,23 @@ class MapRGL extends Component {
     )
   }
 }
-function mapStateToProps({ mapStyle, branchDetailSlice }) {
+function mapStateToProps({ mapStyle, branchDetailSlice, geoData }) {
   return {
     mapboxStyle: mapStyle.mapboxStyle,
     isTableVisible: branchDetailSlice.isTableVisible,
     selectedCategories: branchDetailSlice.selectedCategories,
-    branchName: branchDetailSlice.branchName
+    branchName: branchDetailSlice.branchName,
+    euMap: geoData.euMap,
+    branchGeo: geoData.branchGeo,
+    geoDataReady: geoData.geoDataReady
   }
 }
-export default connect(mapStateToProps, { toggleVisibility, showTable, setBranchName })(
-  MapRGL
-)
+export default connect(mapStateToProps, {
+  toggleVisibility,
+  showTable,
+  setBranchName,
+  fetchGeoData
+})(MapRGL)
 
 MapRGL.propTypes = {
   mapboxStyle: PropTypes.string.isRequired,
@@ -361,5 +333,8 @@ MapRGL.propTypes = {
   selectedCategories: PropTypes.array.isRequired,
   toggleVisibility: PropTypes.func.isRequired,
   setBranchName: PropTypes.func.isRequired,
-  showTable: PropTypes.func.isRequired
+  showTable: PropTypes.func.isRequired,
+  euMap: PropTypes.object.isRequired,
+  branchGe: PropTypes.object.isRequired,
+  geoDataReady: PropTypes.bool.isRequired
 }
