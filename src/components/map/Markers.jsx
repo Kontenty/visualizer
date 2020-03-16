@@ -1,7 +1,7 @@
 import React from 'react'
 import { Marker } from 'react-map-gl'
 
-import { roundTo } from '../helpers'
+import { roundTo } from 'helpers'
 
 const Markers = ({ data }) => {
   return data

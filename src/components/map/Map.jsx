@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import MapGL, { Source, Layer, Popup } from 'react-map-gl'
+import MapGL, { Source, Layer } from 'react-map-gl'
 import _ from 'lodash'
 import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
@@ -9,9 +9,11 @@ import { interpolateOranges } from 'd3-scale-chromatic'
 import { scaleSequential } from 'd3-scale'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
-import Table from './TableSortable'
+import Table from 'components/TableSortable'
+import BranchPopup from './BranchPopup'
+
 import Markers from './Markers'
-import RightBar from './RightBar'
+import RightBar from 'components/RightBar'
 import { fetchGeoData } from 'slices/geoDataSlice'
 
 import { sumArrays, equalArrays, roundTo } from 'helpers'
@@ -190,8 +192,6 @@ class MapRGL extends Component {
         totalFlow
       ]
 
-      // console.log(rowsForSort)
-      // console.log(rowData)
       const popupInfo = {
         lngLat: event.lngLat,
         properties,
@@ -212,32 +212,12 @@ class MapRGL extends Component {
     return array.map(arr => arr[i])
   }
 
-  renderPopup() {
-    const { popupInfo, showPopup } = this.state
-    if (showPopup) {
-      const { properties } = popupInfo
-
-      return (
-        <Popup
-          longitude={popupInfo.lngLat[0]}
-          latitude={popupInfo.lngLat[1]}
-          onClose={() => {
-            this.setState({ showPopup: false })
-            // this.props.toggleVisibility()
-          }}
-        >
-          <div>
-            type: {properties['CB Type']} <br />
-            {properties['CB Node 1']} - {properties['CB Node 2']}
-          </div>
-        </Popup>
-      )
-    }
-    return null
+  closePopup = () => {
+    this.setState({ showPopup: false })
   }
 
   render() {
-    const { viewport, popupInfo } = this.state
+    const { viewport, popupInfo, showPopup } = this.state
     const { euMap, branchGeo, geoDataReady } = this.props
 
     return (
@@ -267,7 +247,9 @@ class MapRGL extends Component {
                 <Layer {...branchArrowLayer} />
               </Source>
               <Markers data={this.state.netPositions} />
-              {this.renderPopup()}
+              {showPopup && (
+                <BranchPopup popupInfo={popupInfo} onClose={this.closePopup} />
+              )}
             </>
           )}
         </MapGL>

@@ -2,8 +2,7 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 
-// import Map from './Map'
-import MapRGL from './MapRMG'
+import Map from './map/Map'
 import NavBar from './NavBar'
 import SideBar from './SideBar'
 import MapStyleToggle from './MapStyleToggle'
@@ -52,7 +51,7 @@ const App = () => {
         <div className={classes.toolbar} />
 
         <div className={classes.mapWrapper}>
-          <MapRGL />
+          <Map />
           <MapStyleToggle />
         </div>
       </main>
