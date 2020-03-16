@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { addFeature } from '../helpers'
+import { addFeature } from 'helpers'
 
 const initialState = {
   euMap: null,

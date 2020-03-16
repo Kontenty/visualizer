@@ -19,7 +19,7 @@ import LoopIcon from '@material-ui/icons/Loop'
 import ShuffleIcon from '@material-ui/icons/Shuffle'
 import TuneIcon from '@material-ui/icons/Tune'
 
-import { showTable, selectZone } from '../slices/branchDetailSlice'
+import { showTable, selectZone } from 'slices/branchDetailSlice'
 
 const useStyles = makeStyles({
   root: {
