@@ -92,7 +92,7 @@ class MapRGL extends Component {
       countriesPaint: {
         'fill-color': '#ffffe6',
         // 'fill-outline-color': '#333',
-        'fill-opacity': 0.4
+        'fill-opacity': 0.3
       },
       popupInfo: null,
       showPopup: false,
@@ -100,7 +100,7 @@ class MapRGL extends Component {
     }
     this.defaultCountriesPaint = {
       'fill-color': '#ffffe6',
-      'fill-opacity': 0.4
+      'fill-opacity': 0.3
     }
   }
 
@@ -221,7 +221,7 @@ class MapRGL extends Component {
   }
 
   render() {
-    const { viewport, popupInfo, showPopup } = this.state
+    const { viewport, popupInfo, showPopup, countriesPaint } = this.state
     const { euMap, branchGeo, geoDataReady } = this.props
 
     return (
@@ -250,7 +250,11 @@ class MapRGL extends Component {
                 <Layer {...branchCircleLayer} />
                 <Layer {...branchArrowLayer} />
               </Source>
-              <Markers data={this.state.netPositions} zoom={viewport.zoom} />
+              <Markers
+                data={this.state.netPositions}
+                zoom={viewport.zoom}
+                colors={countriesPaint['fill-color']}
+              />
               {showPopup && (
                 <BranchPopup popupInfo={popupInfo} onClose={this.closePopup} />
               )}
