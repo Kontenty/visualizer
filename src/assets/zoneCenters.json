@@ -277,7 +277,34 @@
     "center": [13.459771246457647, 56.47693706274299],
     "representative_point": [14.52982027753307, 56.48690277100762]
   },
+  {
+    "name": "SI",
+    "admin": "Slovenia",
 
+    "center": [14.52, 46.25],
+    "representative_point": [14.52, 46.25]
+  },
+  {
+    "name": "HR",
+    "admin": "Croatia",
+
+    "center": [16.46, 45.83],
+    "representative_point": [16.46, 45.83]
+  },
+  {
+    "name": "ME",
+    "admin": "Montenegro",
+
+    "center": [19, 42.85],
+    "representative_point": [19, 42.85]
+  },
+  {
+    "name": "MK",
+    "admin": "Macedonia",
+
+    "center": [21.8, 41.8],
+    "representative_point": [21.8, 41.8]
+  },
   {
     "name": "RS",
     "admin": "Serbia",
@@ -285,6 +312,7 @@
     "center": [20.149601660166507, 44.85235389408865],
     "representative_point": [20.7, 44.25]
   },
+
   {
     "name": "BA",
     "admin": "Bosnia",

@@ -149,7 +149,7 @@ class MapRGL extends Component {
           netPositions.push({ name, value, coords: feature.representative_point })
         fillExpression.push(rowData[i][0], colorScale(value))
       })
-      fillExpression.push('rgb(240,240,240)')
+      fillExpression.push('rgb(150,150,150)')
 
       this.setState({
         countriesPaint: { 'fill-opacity': 0.97, 'fill-color': fillExpression },
