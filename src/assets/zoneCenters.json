@@ -34,7 +34,7 @@
   {
     "name": "AT",
 
-    "representative_point": [14.525548, 47.394168]
+    "representative_point": [14.525548, 47.8]
   },
   {
     "name": "LU",
@@ -60,21 +60,21 @@
     "name": "BE",
 
     "center": [4.6377110182266925, 50.63771684285186],
-    "representative_point": [4.837412567892792, 50.50381294761672]
+    "representative_point": [4.56, 50.85]
   },
 
   {
     "name": "NL",
 
     "center": [5.63970363623257, 52.280965414683045],
-    "representative_point": [5.473704114480995, 52.07641856983658]
+    "representative_point": [5.2, 52.4]
   },
 
   {
     "name": "PL",
 
     "center": [19.39358049925106, 52.12581250879247],
-    "representative_point": [19.9, 51.92908988810382]
+    "representative_point": [18.8, 52]
   },
 
   {
@@ -95,7 +95,7 @@
     "name": "SK",
 
     "center": [19.48042714591562, 48.704892697390356],
-    "representative_point": [19.61573136393138, 48.65243749802866]
+    "representative_point": [18.8, 48.9]
   },
 
   {
@@ -116,7 +116,7 @@
     "name": "CH",
 
     "center": [8.9292547573271, 46.81095920207497],
-    "representative_point": [7.9, 47.5]
+    "representative_point": [7.9, 47.15]
   },
 
   {
@@ -283,14 +283,14 @@
     "admin": "Serbia",
 
     "center": [20.149601660166507, 44.85235389408865],
-    "representative_point": [22, 43.51974792316014]
+    "representative_point": [20.7, 44.25]
   },
   {
     "name": "BA",
     "admin": "Bosnia",
 
     "center": [16.715972740748853, 44.897521465810456],
-    "representative_point": [17.099739056330996, 44.6457515030596]
+    "representative_point": [17.6, 44.4]
   },
   {
     "name": "AL",
