@@ -74,7 +74,7 @@ const BranchDetailControl = ({
   return (
     <div className={classes.root}>
       <Typography variant='h6' align='center'>
-        {branchName}
+        {branchName ? branchName : '...'}
       </Typography>
       <Typography variant='subtitle1' align='center'>
         {' '}

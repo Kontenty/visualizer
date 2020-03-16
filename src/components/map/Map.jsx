@@ -84,6 +84,8 @@ class MapRGL extends Component {
         longitude: 21.0206279,
         latitude: 52.1802912,
         zoom: 3,
+        maxZoom: 8,
+        minZoom: 1.5,
         bearing: 0,
         pitch: 0
       },
@@ -248,7 +250,7 @@ class MapRGL extends Component {
                 <Layer {...branchCircleLayer} />
                 <Layer {...branchArrowLayer} />
               </Source>
-              <Markers data={this.state.netPositions} />
+              <Markers data={this.state.netPositions} zoom={viewport.zoom} />
               {showPopup && (
                 <BranchPopup popupInfo={popupInfo} onClose={this.closePopup} />
               )}
