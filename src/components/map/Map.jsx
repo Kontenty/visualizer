@@ -96,6 +96,10 @@ class MapRGL extends Component {
       showPopup: false,
       netPositions: null
     }
+    this.defaultCountriesPaint = {
+      'fill-color': '#ffffe6',
+      'fill-opacity': 0.4
+    }
   }
 
   componentDidMount() {
@@ -104,8 +108,9 @@ class MapRGL extends Component {
 
   componentDidUpdate(prevProps) {
     if (
-      this.state.popupInfo &&
-      !equalArrays(this.props.selectedCategories, prevProps.selectedCategories)
+      (this.state.popupInfo &&
+        !equalArrays(this.props.selectedCategories, prevProps.selectedCategories)) ||
+      this.props.branchName !== prevProps.branchName
     ) {
       this.setZoneColor()
     }
@@ -115,10 +120,7 @@ class MapRGL extends Component {
     const { selectedCategories } = this.props
     if (selectedCategories.length === 0) {
       this.setState({
-        countriesPaint: {
-          'fill-color': '#ffffe6',
-          'fill-opacity': 0.4
-        },
+        countriesPaint: this.defaultCountriesPaint,
         netPositions: null
       })
       return
@@ -143,12 +145,12 @@ class MapRGL extends Component {
         const feature = centers.find(el => el.name === name)
         if (feature)
           netPositions.push({ name, value, coords: feature.representative_point })
-        return fillExpression.push(rowData[i][0], colorScale(value))
+        fillExpression.push(rowData[i][0], colorScale(value))
       })
-      fillExpression.push('rgb(255,255,255)')
+      fillExpression.push('rgb(240,240,240)')
 
       this.setState({
-        countriesPaint: { 'fill-opacity': 0.95, 'fill-color': fillExpression },
+        countriesPaint: { 'fill-opacity': 0.97, 'fill-color': fillExpression },
         netPositions
       })
     }
@@ -311,7 +313,7 @@ MapRGL.propTypes = {
   toggleVisibility: PropTypes.func.isRequired,
   setBranchName: PropTypes.func.isRequired,
   showTable: PropTypes.func.isRequired,
-  euMap: PropTypes.object.isRequired,
-  branchGe: PropTypes.object.isRequired,
+  euMap: PropTypes.object,
+  branchGeo: PropTypes.object,
   geoDataReady: PropTypes.bool.isRequired
 }
