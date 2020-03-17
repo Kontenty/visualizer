@@ -9,7 +9,7 @@ import App from './components/App'
 const theme = createMuiTheme({
   typography: {
     fontFamily: [
-      'Raleway',
+      'PT Sans',
       '"Segoe UI"',
       'Roboto',
       'Arial',

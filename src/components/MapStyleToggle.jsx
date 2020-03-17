@@ -6,7 +6,7 @@ import MapOutlinedIcon from '@material-ui/icons/MapOutlined'
 import styled from 'styled-components'
 import { Transition } from 'react-transition-group'
 
-import { setMapboxStyle } from '../actions'
+import { setMapboxStyle } from 'slices/mapLookSlice'
 
 const StyleD = styled.div`
   display: grid;

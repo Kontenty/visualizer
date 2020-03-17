@@ -7,7 +7,7 @@ import styled from 'styled-components'
 // import axios from 'axios'
 
 import MapStyleToggle from './MapStyleToggle'
-import { setMapboxStyle } from '../actions'
+import { setMapboxStyle } from 'slices/mapLookSlice'
 
 const accessToken =
   'pk.eyJ1Ijoia29udGVudHkiLCJhIjoiY2s1NnZlaHBhMDdyZDNmcGd2MGZiMXF6aCJ9.2VrHuqCEQVaI8dJqicq1Ug'
@@ -125,7 +125,7 @@ class Map extends Component {
 
 function mapStateToProps(state) {
   return {
-    mapboxStyle: state.mapStyle.mapboxStyle
+    mapboxStyle: state.mapLook.mapStyle
   }
 }
 

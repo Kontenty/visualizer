@@ -293,9 +293,9 @@ class MapRGL extends Component {
     )
   }
 }
-function mapStateToProps({ mapStyle, branchDetailSlice, geoData }) {
+function mapStateToProps({ mapLook, branchDetailSlice, geoData }) {
   return {
-    mapboxStyle: mapStyle.mapboxStyle,
+    mapboxStyle: mapLook.mapboxStyle,
     isTableVisible: branchDetailSlice.isTableVisible,
     selectedCategories: branchDetailSlice.selectedCategories,
     branchName: branchDetailSlice.branchName,
