@@ -5,26 +5,27 @@
 #### Recommended
 
 - Visual Studio code with prettier plugin
+- Yarn
 
 ### Installation
 
 ```
-npm i
+yarn
 ```
 
 ### Development server
 
 ```
-npm start
+yarn start
 ```
 
 ### Production version
 
 ```
-npm run build
+yarn run build
 ```
 
 ```
-npm i -g serve
+yarn global add serve
 serve -s build -l 4000
 ```
