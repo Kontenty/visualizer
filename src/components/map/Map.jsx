@@ -5,7 +5,7 @@ import MapGL, { Source, Layer } from 'react-map-gl'
 import _ from 'lodash'
 import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
-import { interpolateOranges } from 'd3-scale-chromatic'
+import { interpolateOranges, interpolateOrRd, interpolateBlues } from 'd3-scale-chromatic'
 import { scaleSequential } from 'd3-scale'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
@@ -19,6 +19,12 @@ import { fetchGeoData } from 'slices/geoDataSlice'
 import { sumArrays, equalArrays, roundTo } from 'helpers'
 import { toggleVisibility, showTable, setBranchName } from 'slices/branchDetailSlice'
 import centers from 'assets/zoneCenters.json'
+
+const colorsDict = {
+  orange: interpolateOranges,
+  red: interpolateOrRd,
+  blue: interpolateBlues
+}
 
 const countriesLineLayer = {
   id: 'lines',
@@ -112,7 +118,8 @@ class MapRGL extends Component {
     if (
       (this.state.popupInfo &&
         !equalArrays(this.props.selectedCategories, prevProps.selectedCategories)) ||
-      this.props.branchName !== prevProps.branchName
+      this.props.branchName !== prevProps.branchName ||
+      this.props.colorScheme !== prevProps.colorScheme
     ) {
       this.setZoneColor()
     }
@@ -137,7 +144,7 @@ class MapRGL extends Component {
       )
       const colorScale = scaleSequential(
         [_.min(sumPerCountry), _.max(sumPerCountry)],
-        t => interpolateOranges(t)
+        t => colorsDict[this.props.colorScheme](t)
       )
 
       const netPositions = []
@@ -296,6 +303,7 @@ class MapRGL extends Component {
 function mapStateToProps({ mapLook, branchDetailSlice, geoData }) {
   return {
     mapboxStyle: mapLook.mapboxStyle,
+    colorScheme: mapLook.colorScheme,
     isTableVisible: branchDetailSlice.isTableVisible,
     selectedCategories: branchDetailSlice.selectedCategories,
     branchName: branchDetailSlice.branchName,
@@ -313,6 +321,7 @@ export default connect(mapStateToProps, {
 
 MapRGL.propTypes = {
   mapboxStyle: PropTypes.string.isRequired,
+  colorScheme: PropTypes.string.isRequired,
   branchName: PropTypes.string.isRequired,
   isTableVisible: PropTypes.bool.isRequired,
   selectedCategories: PropTypes.array.isRequired,

@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  zoneColor: '',
+  colorScheme: 'orange',
   mapboxStyle: 'light-v10'
 }
 
@@ -10,7 +10,7 @@ const mapLookSlice = createSlice({
   initialState,
   reducers: {
     setColorScheme(state, action) {
-      state.color = action.payload
+      state.colorScheme = action.payload
     },
 
     setMapboxStyle(state, action) {

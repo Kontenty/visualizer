@@ -119,7 +119,7 @@ function EnhancedTableHead(props) {
             padding={i === 0 ? 'none' : 'default'}
             key={'cell' + i}
           >
-            {cell}
+            {i === 0 ? cell : -cell}
           </StyledTableCell>
         ))}
       </TableRow>
@@ -172,6 +172,8 @@ const EnhancedTable = ({ rows, headRow }) => {
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('calories')
 
+  // const totalFlow = headRow[headRow.length - 1]
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
@@ -222,13 +224,15 @@ const EnhancedTable = ({ rows, headRow }) => {
                           align='right'
                           className={classes.summaryCell}
                         >
-                          {row[key]}
+                          {/* {totalFlow >= 0 ? row[key] : -row[key]} */}
+                          {-row[key]}
                         </TableCell>
                       )
                     }
                     return (
                       <TableCell key={index + key} align='right'>
-                        {row[key]}
+                        {/* {totalFlow >= 0 ? row[key] : -row[key]} */}
+                        {-row[key]}
                       </TableCell>
                     )
                   })}
