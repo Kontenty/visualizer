@@ -15,6 +15,7 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 
 import BranchDetailControl from './BranchDetailControl'
 import { setColorScheme } from 'slices/mapLookSlice'
+import { fetchBranchData } from 'slices/geoDataSlice'
 
 const drawerWidth = 290
 
@@ -49,8 +50,21 @@ const useStyles = makeStyles(theme => ({
 
 const colors = ['orange', 'red', 'blue']
 
+const fileList = [
+  'VIZ-DEC_20181121_0630_FO3_UC8_PFC.json',
+  'VIZ-DEC_20181130_1030_FO5_UC8_PFC.json',
+  'VIZ-DEC_20190203_2330_FO7_UC8_PFC.json',
+  'VIZ-DEC_20190318_1930_FO1_UC8_PFC.json',
+  'VIZ-DEC_20190418_1630_FO4_UC8_PFC.json',
+  'VIZ-DEC_20190422_1530_FO1_UC8_PFC.json',
+  'VIZ-DEC_20190508_0830_FO3_UC8_PFC.json',
+  'VIZ-DEC_20190624_0930_FO1_UC8_PFC.json',
+  'VIZ-DEC_20190722_1330_FO1_UC8_PFC.json',
+  'VIZ-DEC_20190723_1630_FO2_UC8_PFC.json'
+]
+
 // --- component function
-const SideBar = ({ colorScheme, setColorScheme }) => {
+const SideBar = ({ colorScheme, setColorScheme, branchDataName, fetchBranchData }) => {
   const classes = useStyles()
 
   return (
@@ -82,6 +96,23 @@ const SideBar = ({ colorScheme, setColorScheme }) => {
           </Fab>
         </label>
       </div>
+      <FormControl className={classes.select}>
+        <InputLabel id='datasource-select-label'>Select data source</InputLabel>
+        <Select
+          labelId='datasource-select-label'
+          id='datasource-select'
+          value={branchDataName}
+          onChange={ev => fetchBranchData(ev.target.value)}
+        >
+          {fileList.map(file => (
+            <MenuItem key={file} value={file}>
+              {file}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      <Divider />
       <BranchDetailControl />
       <Divider />
       <FormControl className={classes.select}>
@@ -103,16 +134,18 @@ const SideBar = ({ colorScheme, setColorScheme }) => {
   )
 }
 
-function mapStateToProps({ branchDetailSlice, mapLook }) {
-  return {
-    showSelector: branchDetailSlice.isVisible,
-    colorScheme: mapLook.colorScheme
-  }
-}
+const mapStateToProps = ({ branchDetailSlice, mapLook, geoData }) => ({
+  showSelector: branchDetailSlice.isVisible,
+  colorScheme: mapLook.colorScheme,
+  branchDataName: geoData.branchDataName
+})
+const mapDispatch = { setColorScheme, fetchBranchData }
 
-export default connect(mapStateToProps, { setColorScheme })(SideBar)
+export default connect(mapStateToProps, mapDispatch)(SideBar)
 
 SideBar.propTypes = {
   colorScheme: PropTypes.string,
-  setColorScheme: PropTypes.func
+  branchDataName: PropTypes.string,
+  setColorScheme: PropTypes.func,
+  fetchBranchData: PropTypes.func
 }

@@ -13,7 +13,6 @@ import Table from 'components/TableSortable'
 import BranchPopup from './BranchPopup'
 
 import ZoneMarkers from './ZoneMarkers'
-import BranchMarkers from './BranchMarkers'
 import RightBar from 'components/RightBar'
 import { countriesLineLayer, branchLineLayer, branchCircleLayer } from './layerConfig'
 import { fetchGeoData } from 'slices/geoDataSlice'
@@ -210,7 +209,6 @@ class MapRGL extends Component {
                 zoom={viewport.zoom}
                 colors={countriesPaint['fill-color']}
               />
-              <BranchMarkers />
               {showPopup && (
                 <BranchPopup popupInfo={popupInfo} onClose={this.closePopup} />
               )}

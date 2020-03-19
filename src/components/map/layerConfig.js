@@ -31,7 +31,8 @@ export const branchCircleLayer = {
     }
   }
 }
-/* const branchArrowLayer = {
+
+export const branchArrowLayer = {
   id: 'branchArrow',
   type: 'symbol',
   layout: {
@@ -51,4 +52,4 @@ export const branchCircleLayer = {
     },
     visibility: 'visible'
   }
-} */
+}

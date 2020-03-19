@@ -1,10 +1,22 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Marker } from 'react-map-gl'
-// import { featureEach } from '@turf/turf'
+import styled from 'styled-components'
 import { find } from 'lodash'
+import { bearing, point } from '@turf/turf'
+import { ReactComponent as ArrowSvg } from 'assets/arrow.svg'
 
-const BranchMarkers = () => {
+const StyledMarker = styled(Marker)`
+  svg {
+    height: 20px;
+    transform: rotate(${props => props.angle}deg);
+  }
+  path {
+    fill: blue;
+  }
+`
+
+const BranchMarkers = ({ zoom }) => {
   const branchCenters = useSelector(({ geoData }) => geoData.branchCenters)
   const branches = useSelector(({ geoData }) => geoData.branchGeo)
 
@@ -15,9 +27,11 @@ const BranchMarkers = () => {
       const centerFt = find(branchCenters.features, o => o.properties.id === id)
       if (centerFt) {
         const { geometry, properties } = centerFt
+        const point1 = point(ft.geometry.coordinates[0])
+        const point2 = point(ft.geometry.coordinates[1])
         return {
           coords: geometry.coordinates,
-          angle: properties.angle,
+          angle: bearing(point1, point2),
           id: properties.id
         }
       }
@@ -26,9 +40,14 @@ const BranchMarkers = () => {
   console.log(data)
   console.log(branches)
   return data.map(dt => (
-    <Marker key={dt.id} longitude={dt.coords[0]} latitude={dt.coords[1]}>
-      {dt.id}
-    </Marker>
+    <StyledMarker
+      key={dt.id}
+      longitude={dt.coords[0]}
+      latitude={dt.coords[1]}
+      angle={dt.angle}
+    >
+      <ArrowSvg />
+    </StyledMarker>
   ))
 }
 
