@@ -15,7 +15,7 @@ const geoDataSlice = createSlice({
   initialState,
   reducers: {
     initialFetchSuccess(state, action) {
-      state.euMap = action.payload
+      state.euMap = action.payload.euMap
       state.branchGeo = action.payload.branchGeo
       state.branchCenters = action.payload.branchCenters
       state.geoDataReady = true

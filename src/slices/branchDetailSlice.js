@@ -2,15 +2,9 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   branchName: '',
+  coName: '',
   isVisible: true,
   isTableVisible: false,
-  columns: [
-    'Internal flows [MW]',
-    'Loop flows [MW]',
-    'Export/import flows [MW]',
-    'Transit flows [MW]',
-    'PST flows [MW]'
-  ],
   selectedCategories: []
 }
 
@@ -21,13 +15,16 @@ const branchDetailSlice = createSlice({
     setBranchName(state, action) {
       state.branchName = action.payload
     },
+    setCOName(state, action) {
+      state.coName = action.payload
+    },
     toggleVisibility(state) {
       state.isVisible = !state.isVisible
     },
     showTable(state) {
       state.isTableVisible = !state.isTableVisible
     },
-    selectZone(state, action) {
+    selectCategory(state, action) {
       state.selectedCategories = action.payload
     }
   }
@@ -36,8 +33,9 @@ const branchDetailSlice = createSlice({
 export const {
   toggleVisibility,
   showTable,
-  selectZone,
-  setBranchName
+  selectCategory,
+  setBranchName,
+  setCOName
 } = branchDetailSlice.actions
 
 export default branchDetailSlice.reducer

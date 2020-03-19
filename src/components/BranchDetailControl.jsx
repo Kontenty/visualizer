@@ -19,7 +19,7 @@ import LoopIcon from '@material-ui/icons/Loop'
 import ShuffleIcon from '@material-ui/icons/Shuffle'
 import TuneIcon from '@material-ui/icons/Tune'
 
-import { showTable, selectZone } from 'slices/branchDetailSlice'
+import { showTable, selectCategory } from 'slices/branchDetailSlice'
 
 const useStyles = makeStyles({
   root: {
@@ -47,12 +47,20 @@ const switchListIcons = [
   <TuneIcon key='ic5' />
 ]
 
+const options = {
+  IN: 'Internal flows [MW]',
+  LF: 'Loop flows [MW]',
+  IE: 'Export/import flows [MW]',
+  TR: 'Transit flows [MW]',
+  PST: 'PST flows [MW]'
+}
+
 const BranchDetailControl = ({
   branchName,
-  options,
+  coName,
   showTable,
   isTableVisible,
-  selectZone
+  selectCategory
 }) => {
   const classes = useStyles()
   const [checked, setChecked] = React.useState([])
@@ -68,32 +76,34 @@ const BranchDetailControl = ({
     }
 
     setChecked(newChecked)
-    selectZone(newChecked)
+    selectCategory(newChecked)
   }
 
   return (
     <div className={classes.root}>
-      <Typography variant='h6' align='center'>
-        {branchName ? branchName : '...'}
+      <Typography variant='subtitle1' align='center'>
+        {`CB: ${branchName}` || '...'}
       </Typography>
       <Typography variant='subtitle1' align='center'>
-        {' '}
+        {`CO: ${coName}` || '...'}
+      </Typography>
+      <Typography variant='subtitle2' align='center'>
         Select flow type
       </Typography>
       <Divider />
       <List>
-        {options.map((option, index) => (
-          <ListItem button dense key={option} onClick={handleToggle(option)}>
+        {Object.keys(options).map((key, index) => (
+          <ListItem button dense key={key} onClick={handleToggle(key)}>
             <ListItemIcon className={classes.listIcon}>
               {switchListIcons[index]}
             </ListItemIcon>
-            <ListItemText primary={option} />
+            <ListItemText primary={options[key]} />
             <ListItemSecondaryAction>
               <Switch
                 edge='end'
-                checked={checked.indexOf(option) !== -1}
-                onChange={handleToggle(option)}
-                value={option}
+                checked={checked.indexOf(key) !== -1}
+                onChange={handleToggle(key)}
+                value={key}
               />
             </ListItemSecondaryAction>
           </ListItem>
@@ -111,18 +121,20 @@ const BranchDetailControl = ({
 
 function mapStateToProps({ branchDetailSlice }) {
   return {
-    options: branchDetailSlice.columns,
     isTableVisible: branchDetailSlice.isTableVisible,
-    branchName: branchDetailSlice.branchName
+    branchName: branchDetailSlice.branchName,
+    coName: branchDetailSlice.coName
   }
 }
 
-export default connect(mapStateToProps, { showTable, selectZone })(BranchDetailControl)
+export default connect(mapStateToProps, { showTable, selectCategory })(
+  BranchDetailControl
+)
 
 BranchDetailControl.propTypes = {
   branchName: PropTypes.string.isRequired,
-  options: PropTypes.array.isRequired,
+  coName: PropTypes.string.isRequired,
   isTableVisible: PropTypes.bool.isRequired,
   showTable: PropTypes.func.isRequired,
-  selectZone: PropTypes.func.isRequired
+  selectCategory: PropTypes.func.isRequired
 }

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Popup } from 'react-map-gl'
 
 const BranchPopup = ({ popupInfo, onClose }) => {
@@ -11,11 +12,17 @@ const BranchPopup = ({ popupInfo, onClose }) => {
       onClose={() => onClose()}
     >
       <div>
-        type: {properties['CB Type']} <br />
-        {properties['CB Node 1']} - {properties['CB Node 2']}
+        Branch: {properties.CB_NAME} <br />
+        F-max: {properties.F_MAX} <br />
+        {properties.CB_FROM} - {properties.CB_TO}
       </div>
     </Popup>
   )
 }
 
 export default BranchPopup
+
+BranchPopup.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  popupInfo: PropTypes.object.isRequired
+}

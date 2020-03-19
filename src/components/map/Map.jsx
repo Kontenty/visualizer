@@ -18,7 +18,12 @@ import { countriesLineLayer, branchLineLayer, branchCircleLayer } from './layerC
 import { fetchGeoData } from 'slices/geoDataSlice'
 
 import { sumArrays, equalArrays, roundTo } from 'helpers'
-import { toggleVisibility, showTable, setBranchName } from 'slices/branchDetailSlice'
+import {
+  toggleVisibility,
+  showTable,
+  setBranchName,
+  setCOName
+} from 'slices/branchDetailSlice'
 import centers from 'assets/zoneCenters.json'
 
 const colorsDict = {
@@ -86,6 +91,9 @@ class MapRGL extends Component {
     const countOrNot = categoriesList.map(el => !!selectedCategories.includes(el))
 
     if (selectedCategories.length > 0) {
+      console.log(rowData)
+      console.log(countOrNot)
+      console.log(categoriesList)
       const sumPerCountry = rowData.map(country =>
         country[1].filter((_, i) => countOrNot[i]).reduce((sum, current) => sum + current)
       )
@@ -120,12 +128,12 @@ class MapRGL extends Component {
     const clicked = event.features[0]
 
     if (clicked) {
-      // this.props.toggleVisibility()
       const { properties } = clicked
       const flows = JSON.parse(properties.flows)
       const zoneNames = JSON.parse(properties.zones)
-      const filteredCat = Object.keys(flows).filter(key => key !== 'Exchange flows [MW]')
-      const flowValues = filteredCat.map(key => flows[key])
+      const categories = Object.keys(flows)
+      const flowValues = categories.map(key => flows[key])
+      // console.log(flowValues)
       const rowData = zoneNames.map((zone, i) => [zone, this.getValue(flowValues, i)])
       const countriesVals = rowData.map(el => el[1])
       // console.log(countriesVals)
@@ -133,7 +141,7 @@ class MapRGL extends Component {
 
       const totalFlow = roundTo(countriesTotals.reduce((sum, num) => sum + num))
 
-      const columns = ['Zone', ...filteredCat, 'Zone total']
+      const columns = ['Zone', ...categories, 'Zone total']
       const rowsForSort = rowData.map((row, index) => ({
         name: row[0],
         internal_flow: row[1][0],
@@ -161,7 +169,8 @@ class MapRGL extends Component {
         rowsForSort
       }
 
-      this.props.setBranchName(`${properties['CB Node 1']} - ${properties['CB Node 2']}`)
+      this.props.setBranchName(`${properties.CB_FROM} - ${properties.CB_TO}`)
+      this.props.setCOName(properties.CO_NAME)
       this.setState({ popupInfo, showPopup: true })
     }
   }
@@ -266,6 +275,7 @@ const mapDispatch = {
   toggleVisibility,
   showTable,
   setBranchName,
+  setCOName,
   fetchGeoData
 }
 export default connect(mapStateToProps, mapDispatch)(MapRGL)
@@ -281,6 +291,7 @@ MapRGL.propTypes = {
   geoDataReady: PropTypes.bool.isRequired,
   toggleVisibility: PropTypes.func.isRequired,
   setBranchName: PropTypes.func.isRequired,
+  setCOName: PropTypes.func.isRequired,
   showTable: PropTypes.func.isRequired,
   fetchGeoData: PropTypes.func.isRequired
 }
