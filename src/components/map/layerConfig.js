@@ -6,6 +6,11 @@ export const countriesLineLayer = {
     'line-width': 2
   }
 }
+export const zonesVector = {
+  id: 'lucte-zones',
+  type: 'fill',
+  'source-layer': 'ucte_zones'
+}
 export const branchLineLayer = {
   id: 'branchLine',
   type: 'line',

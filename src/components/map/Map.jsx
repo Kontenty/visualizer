@@ -229,6 +229,19 @@ class MapRGL extends Component {
         >
           {geoDataReady && (
             <>
+              {/* <Source
+                id='ucte-vector'
+                type='vector'
+                url='https://maps.vis.services.idea.edu.pl/capabilities/zones.json'
+              >
+                <Layer
+                  id='data'
+                  source-layer='ucte_zones'
+                  type='fill'
+                  paint={this.state.countriesPaint}
+                />
+                <Layer {...countriesLineLayer} source-layer='ucte_zones' />
+              </Source> */}
               <Source type='geojson' data={euMap}>
                 <Layer id='data' type='fill' paint={this.state.countriesPaint} />
                 <Layer {...countriesLineLayer} />
