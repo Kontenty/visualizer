@@ -328,10 +328,11 @@ MapRGL.propTypes = {
   branchName: PropTypes.string.isRequired,
   isTableVisible: PropTypes.bool.isRequired,
   selectedCategories: PropTypes.array.isRequired,
+  euMap: PropTypes.object,
+  branchGeo: PropTypes.object,
+  geoDataReady: PropTypes.bool.isRequired,
   toggleVisibility: PropTypes.func.isRequired,
   setBranchName: PropTypes.func.isRequired,
   showTable: PropTypes.func.isRequired,
-  euMap: PropTypes.object,
-  branchGeo: PropTypes.object,
-  geoDataReady: PropTypes.bool.isRequired
+  fetchGeoData: PropTypes.func.isRequired
 }
