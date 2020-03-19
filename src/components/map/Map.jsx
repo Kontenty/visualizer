@@ -229,6 +229,7 @@ class MapRGL extends Component {
 
   render() {
     const { viewport, popupInfo, showPopup, countriesPaint } = this.state
+    const { totalFlow } = popupInfo || 0
     const { euMap, branchGeo, geoDataReady } = this.props
 
     return (
@@ -274,7 +275,7 @@ class MapRGL extends Component {
               <div style={{ margin: '3px 2px' }}>
                 <Chip
                   avatar={<Avatar>B</Avatar>}
-                  label={`branch - ${this.props.branchName}`}
+                  label={`branch: ${this.props.branchName}`}
                   color='primary'
                   // deleteIcon={<DoneIcon />}
                   variant='outlined'
@@ -282,7 +283,9 @@ class MapRGL extends Component {
                 />
                 <Chip
                   avatar={<Avatar>T</Avatar>}
-                  label={`total flow - ${popupInfo.totalFlow}`}
+                  label={`total flow: ${
+                    totalFlow >= 0 ? totalFlow + ' - DIR' : -totalFlow + ' - OPP'
+                  }`}
                   color='primary'
                   // deleteIcon={<DoneIcon />}
                   variant='outlined'

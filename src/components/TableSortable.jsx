@@ -81,7 +81,7 @@ const StyledHeadCell = withStyles(theme => ({
 }))(TableCell)
 
 function EnhancedTableHead(props) {
-  const { classes, order, orderBy, onRequestSort, additionalRow } = props
+  const { classes, order, orderBy, onRequestSort, additionalRow, totalFlow } = props
   const createSortHandler = property => event => {
     onRequestSort(event, property)
   }
@@ -119,7 +119,7 @@ function EnhancedTableHead(props) {
             padding={i === 0 ? 'none' : 'default'}
             key={'cell' + i}
           >
-            {i === 0 ? cell : -cell}
+            {i === 0 ? cell : totalFlow >= 0 ? cell : -cell}
           </StyledTableCell>
         ))}
       </TableRow>
@@ -172,7 +172,7 @@ const EnhancedTable = ({ rows, headRow }) => {
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('calories')
 
-  // const totalFlow = headRow[headRow.length - 1]
+  const totalFlow = headRow[headRow.length - 1]
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -191,7 +191,7 @@ const EnhancedTable = ({ rows, headRow }) => {
         >
           <EnhancedTableHead
             classes={classes}
-            // numSelected={selected.length}
+            totalFlow={totalFlow}
             order={order}
             orderBy={orderBy}
             onRequestSort={handleRequestSort}
@@ -224,15 +224,13 @@ const EnhancedTable = ({ rows, headRow }) => {
                           align='right'
                           className={classes.summaryCell}
                         >
-                          {/* {totalFlow >= 0 ? row[key] : -row[key]} */}
-                          {-row[key]}
+                          {totalFlow >= 0 ? row[key] : -row[key]}
                         </TableCell>
                       )
                     }
                     return (
                       <TableCell key={index + key} align='right'>
-                        {/* {totalFlow >= 0 ? row[key] : -row[key]} */}
-                        {-row[key]}
+                        {totalFlow >= 0 ? row[key] : -row[key]}
                       </TableCell>
                     )
                   })}
