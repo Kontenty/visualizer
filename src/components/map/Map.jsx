@@ -5,8 +5,15 @@ import MapGL, { Source, Layer } from 'react-map-gl'
 import _ from 'lodash'
 import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
-import { interpolateOranges, interpolateOrRd, interpolateBlues } from 'd3-scale-chromatic'
-import { scaleSequential } from 'd3-scale'
+import {
+  interpolateOranges,
+  interpolateOrRd,
+  interpolateBlues,
+  interpolatePuOr,
+  interpolateRdBu,
+  interpolateRdYlBu
+} from 'd3-scale-chromatic'
+import { scaleSequential, scaleDiverging } from 'd3-scale'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
 import Table from 'components/TableSortable'
@@ -27,9 +34,16 @@ import {
 import centers from 'assets/zoneCenters.json'
 
 const colorsDict = {
-  orange: interpolateOranges,
-  red: interpolateOrRd,
-  blue: interpolateBlues
+  seq: {
+    orange: interpolateOranges,
+    red: interpolateOrRd,
+    blue: interpolateBlues
+  },
+  div: {
+    orange: interpolatePuOr,
+    red: interpolateRdBu,
+    blue: interpolateRdYlBu
+  }
 }
 
 class MapRGL extends Component {
@@ -91,16 +105,26 @@ class MapRGL extends Component {
     const countOrNot = categoriesList.map(el => !!selectedCategories.includes(el))
 
     if (selectedCategories.length > 0) {
-      console.log(rowData)
-      console.log(countOrNot)
-      console.log(categoriesList)
       const sumPerCountry = rowData.map(country =>
         country[1].filter((_, i) => countOrNot[i]).reduce((sum, current) => sum + current)
       )
-      const colorScale = scaleSequential(
-        [_.min(sumPerCountry), _.max(sumPerCountry)],
-        t => colorsDict[this.props.colorScheme](t)
-      )
+      const min = _.min(sumPerCountry)
+      const max = _.max(sumPerCountry)
+      const normalizedMinMax =
+        (min < 0 && max < 0) || (min > 0 && max > 0)
+          ? [min, max]
+          : max > Math.abs(min)
+          ? [-max, 0, max]
+          : [min, 0, -min]
+
+      const colorScale =
+        min < 0 && max > 0
+          ? scaleDiverging(normalizedMinMax, t =>
+              colorsDict.div[this.props.colorScheme](t)
+            )
+          : scaleSequential(normalizedMinMax, t =>
+              colorsDict.seq[this.props.colorScheme](t)
+            )
 
       const netPositions = []
       const fillExpression = ['match', ['get', 'iso_a2']]
