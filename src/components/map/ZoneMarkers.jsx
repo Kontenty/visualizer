@@ -12,12 +12,11 @@ const StyledMarker = styled(Marker)`
   line-height: 1;
 `
 
-const Markers = ({ data, zoom, colors }) => {
+const ZoneMarkers = ({ data, zoom, colors }) => {
   const zoneColors = colors.slice(2, -3)
   return data
     ? data.map((netPos, index) => {
         const color = zoneColors[zoneColors.indexOf(netPos.name) + 1]
-        console.log(netPos, color)
         return (
           // eslint-disable-next-line react/jsx-indent
           <StyledMarker
@@ -38,4 +37,4 @@ const Markers = ({ data, zoom, colors }) => {
     : null
 }
 
-export default Markers
+export default ZoneMarkers

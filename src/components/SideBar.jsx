@@ -113,7 +113,6 @@ function mapStateToProps({ branchDetailSlice, mapLook }) {
 export default connect(mapStateToProps, { setColorScheme })(SideBar)
 
 SideBar.propTypes = {
-  showSelector: PropTypes.bool.isRequired,
   colorScheme: PropTypes.string,
   setColorScheme: PropTypes.func
 }

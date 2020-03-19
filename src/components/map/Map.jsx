@@ -12,8 +12,10 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import Table from 'components/TableSortable'
 import BranchPopup from './BranchPopup'
 
-import Markers from './Markers'
+import ZoneMarkers from './ZoneMarkers'
+import BranchMarkers from './BranchMarkers'
 import RightBar from 'components/RightBar'
+import { countriesLineLayer, branchLineLayer, branchCircleLayer } from './layerConfig'
 import { fetchGeoData } from 'slices/geoDataSlice'
 
 import { sumArrays, equalArrays, roundTo } from 'helpers'
@@ -26,60 +28,6 @@ const colorsDict = {
   blue: interpolateBlues
 }
 
-const countriesLineLayer = {
-  id: 'lines',
-  type: 'line',
-  paint: {
-    'line-color': '#888',
-    'line-width': 2
-  }
-}
-const branchLineLayer = {
-  id: 'branchLine',
-  type: 'line',
-  filter: ['==', '$type', 'LineString'],
-  paint: {
-    'line-color': '#DC143C',
-    'line-width': 2
-  }
-}
-const branchCircleLayer = {
-  id: 'branchCircle',
-  type: 'circle',
-  filter: ['==', '$type', 'Point'],
-  paint: {
-    'circle-color': 'red',
-    'circle-radius': {
-      base: 1.5,
-      stops: [
-        [1, 2],
-        [6, 3],
-        [10, 6]
-      ]
-    }
-  }
-}
-const branchArrowLayer = {
-  id: 'branchArrow',
-  type: 'symbol',
-  layout: {
-    'symbol-placement': 'line-center',
-    'symbol-spacing': 1,
-    'icon-allow-overlap': true,
-    // 'icon-ignore-placement': true,
-    'icon-image': 'rocket-15',
-    'icon-rotate': 45,
-    'icon-size': {
-      base: 1,
-      stops: [
-        [4, 0.5],
-        [6, 1],
-        [10, 1.5]
-      ]
-    },
-    visibility: 'visible'
-  }
-}
 class MapRGL extends Component {
   constructor() {
     super()
@@ -256,13 +204,13 @@ class MapRGL extends Component {
               <Source type='geojson' data={branchGeo}>
                 <Layer {...branchLineLayer} />
                 <Layer {...branchCircleLayer} />
-                <Layer {...branchArrowLayer} />
               </Source>
-              <Markers
+              <ZoneMarkers
                 data={this.state.netPositions}
                 zoom={viewport.zoom}
                 colors={countriesPaint['fill-color']}
               />
+              <BranchMarkers />
               {showPopup && (
                 <BranchPopup popupInfo={popupInfo} onClose={this.closePopup} />
               )}
@@ -312,15 +260,17 @@ function mapStateToProps({ mapLook, branchDetailSlice, geoData }) {
     branchName: branchDetailSlice.branchName,
     euMap: geoData.euMap,
     branchGeo: geoData.branchGeo,
+    branchCenters: geoData.branchCenters,
     geoDataReady: geoData.geoDataReady
   }
 }
-export default connect(mapStateToProps, {
+const mapDispatch = {
   toggleVisibility,
   showTable,
   setBranchName,
   fetchGeoData
-})(MapRGL)
+}
+export default connect(mapStateToProps, mapDispatch)(MapRGL)
 
 MapRGL.propTypes = {
   mapboxStyle: PropTypes.string.isRequired,
