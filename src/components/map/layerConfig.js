@@ -45,8 +45,8 @@ export const branchArrowLayer = {
     'symbol-spacing': 1,
     'icon-allow-overlap': true,
     // 'icon-ignore-placement': true,
-    'icon-image': 'rocket-15',
-    'icon-rotate': 45,
+    'icon-image': 'triangle-11',
+    'icon-rotate': 90,
     'icon-size': {
       base: 1,
       stops: [

@@ -13,7 +13,7 @@ const BranchPopup = ({ popupInfo, onClose }) => {
     >
       <div>
         Branch: {properties.CB_NAME} <br />
-        F-max: {properties.F_MAX} <br />
+        Total flow: {popupInfo.totalFlow} | Fmax: {properties.F_MAX} <br />
         {properties.CB_FROM} - {properties.CB_TO}
       </div>
     </Popup>

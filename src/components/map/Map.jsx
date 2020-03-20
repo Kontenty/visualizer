@@ -21,7 +21,12 @@ import BranchPopup from './BranchPopup'
 
 import ZoneMarkers from './ZoneMarkers'
 import RightBar from 'components/RightBar'
-import { countriesLineLayer, branchLineLayer, branchCircleLayer } from './layerConfig'
+import {
+  countriesLineLayer,
+  branchLineLayer,
+  branchCircleLayer,
+  branchArrowLayer
+} from './layerConfig'
 import { fetchGeoData } from 'slices/geoDataSlice'
 
 import { sumArrays, equalArrays, roundTo } from 'helpers'
@@ -62,9 +67,9 @@ class MapRGL extends Component {
         pitch: 0
       },
       countriesPaint: {
-        'fill-color': '#ffffe6',
+        'fill-color': '#f5f5f5',
         // 'fill-outline-color': '#333',
-        'fill-opacity': 0.3
+        'fill-opacity': 0.1
       },
       popupInfo: null,
       showPopup: false,
@@ -249,6 +254,7 @@ class MapRGL extends Component {
               <Source type='geojson' data={branchGeo}>
                 <Layer {...branchLineLayer} />
                 <Layer {...branchCircleLayer} />
+                <Layer {...branchArrowLayer} />
               </Source>
               <ZoneMarkers
                 data={this.state.netPositions}
@@ -285,7 +291,7 @@ class MapRGL extends Component {
                 />
                 <Chip
                   avatar={<Avatar>F</Avatar>}
-                  label={`F max: ${popupInfo.properties.F_MAX}`}
+                  label={`Fmax: ${popupInfo.properties.F_MAX}`}
                   color='primary'
                   // deleteIcon={<DoneIcon />}
                   variant='outlined'

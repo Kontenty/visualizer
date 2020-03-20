@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
 import {
+  Chip,
   Divider,
   List,
   ListItem,
@@ -36,6 +37,15 @@ const useStyles = makeStyles({
     display: 'flex',
     justifyContent: 'center',
     margin: '5px 0'
+  },
+  header: {
+    paddingLeft: '5px',
+    marginBottom: '5px'
+  },
+  chip: {
+    height: '26px',
+    fontWeight: 'bold',
+    marginRight: '10px'
   }
 })
 
@@ -90,12 +100,15 @@ const BranchDetailControl = ({
 
   return (
     <div className={classes.root}>
-      <Typography variant='subtitle1' align='center'>
-        {`CB: ${branchName}` || '...'}
+      <Typography variant='subtitle1' align='left' className={classes.header}>
+        <Chip label='CB' color='primary' className={classes.chip} />
+        {branchName || '...'}
       </Typography>
-      <Typography variant='subtitle1' align='center'>
-        {`CO: ${formatCoName(coName)}` || '...'}
+      <Typography variant='subtitle1' align='left' className={classes.header}>
+        <Chip label='CO' color='primary' className={classes.chip} />
+        {formatCoName(coName) || '...'}
       </Typography>
+      <Divider />
       <Typography variant='subtitle2' align='center'>
         Select flow type
       </Typography>

@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   colorScheme: 'red',
-  mapboxStyle: 'light-v10'
+  mapboxStyle: 'light-v8'
 }
 
 const mapLookSlice = createSlice({

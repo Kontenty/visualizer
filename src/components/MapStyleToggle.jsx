@@ -38,6 +38,12 @@ const TopRight = styled.div`
 
 const MapStyleToggle = ({ setMapboxStyle }) => {
   const [show, setShow] = useState(false)
+
+  const handleClick = style => {
+    setMapboxStyle(style)
+    setShow(!show)
+  }
+
   return (
     <TopRight>
       <Fab
@@ -55,7 +61,7 @@ const MapStyleToggle = ({ setMapboxStyle }) => {
               size='small'
               variant='contained'
               color='primary'
-              onClick={() => setMapboxStyle('light-v10')}
+              onClick={() => handleClick('light-v8')}
             >
               light
             </Button>
@@ -63,18 +69,18 @@ const MapStyleToggle = ({ setMapboxStyle }) => {
               size='small'
               variant='contained'
               color='primary'
-              onClick={() => setMapboxStyle('dark-v10')}
+              onClick={() => handleClick('dark-v8')}
             >
               dark
             </Button>
-            {/* <Button
+            <Button
               size='small'
               variant='contained'
               color='primary'
-              onClick={() => setMapboxStyle('streets-v10')}
+              onClick={() => handleClick('streets-v8')}
             >
               streets
-            </Button> */}
+            </Button>
           </StyleD>
         )}
       </Transition>
