@@ -174,9 +174,9 @@ class MapRGL extends Component {
       const rowsForSort = rowData.map((row, index) => ({
         name: row[0],
         internal_flow: row[1][0],
-        loop_flow: row[1][1],
         impex_flow: row[1][2],
         transit_flow: row[1][3],
+        loop_flow: row[1][1],
         pst_flow: row[1][4],
         zone_total: countriesTotals[index]
       }))

@@ -42,7 +42,6 @@ const headCells = [
     disablePadding: false,
     label: 'Internal flows [MW]'
   },
-  { id: 'loop_flow', numeric: true, disablePadding: false, label: 'Loop flows [MW]' },
   {
     id: 'impex_flow',
     numeric: true,
@@ -55,6 +54,7 @@ const headCells = [
     disablePadding: false,
     label: 'Transit flows [MW]'
   },
+  { id: 'loop_flow', numeric: true, disablePadding: false, label: 'Loop flows [MW]' },
   { id: 'pst_flow', numeric: true, disablePadding: false, label: 'PST flows [MW]' },
   { id: 'zone_total', numeric: true, disablePadding: false, label: 'Zone total [MW]' }
 ]
@@ -132,7 +132,8 @@ EnhancedTableHead.propTypes = {
   onRequestSort: PropTypes.func.isRequired,
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
   orderBy: PropTypes.string.isRequired,
-  additionalRow: PropTypes.array
+  additionalRow: PropTypes.array,
+  totalFlow: PropTypes.string.isRequired
 }
 
 const useStyles = makeStyles(theme => ({
