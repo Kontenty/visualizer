@@ -39,6 +39,7 @@ const useStyles = makeStyles({
     margin: '5px 0'
   },
   header: {
+    display: 'flex',
     paddingLeft: '5px',
     marginBottom: '5px'
   },
@@ -102,11 +103,11 @@ const BranchDetailControl = ({
     <div className={classes.root}>
       <Typography variant='subtitle1' align='left' className={classes.header}>
         <Chip label='CB' color='primary' className={classes.chip} />
-        {branchName || '...'}
+        <span>{branchName || '...'}</span>
       </Typography>
       <Typography variant='subtitle1' align='left' className={classes.header}>
         <Chip label='CO' color='primary' className={classes.chip} />
-        {formatCoName(coName) || '...'}
+        <span>{formatCoName(coName) || '...'}</span>
       </Typography>
       <Divider />
       <Typography variant='subtitle2' align='center'>

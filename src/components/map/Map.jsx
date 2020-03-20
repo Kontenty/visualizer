@@ -3,8 +3,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import MapGL, { Source, Layer } from 'react-map-gl'
 import _ from 'lodash'
-import Chip from '@material-ui/core/Chip'
-import Avatar from '@material-ui/core/Avatar'
 import {
   interpolateOranges,
   interpolateOrRd,
@@ -16,11 +14,10 @@ import {
 import { scaleSequential, scaleDiverging } from 'd3-scale'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
-import Table from 'components/TableSortable'
 import BranchPopup from './BranchPopup'
-
 import ZoneMarkers from './ZoneMarkers'
-import RightBar from 'components/RightBar'
+import MapRightPanel from './MapRightPanel'
+// import LegendWidget from '../LegendWidget'
 import {
   countriesLineLayer,
   branchLineLayer,
@@ -174,9 +171,9 @@ class MapRGL extends Component {
       const rowsForSort = rowData.map((row, index) => ({
         name: row[0],
         internal_flow: row[1][0],
-        impex_flow: row[1][2],
-        transit_flow: row[1][3],
-        loop_flow: row[1][1],
+        impex_flow: row[1][1],
+        transit_flow: row[1][2],
+        loop_flow: row[1][3],
         pst_flow: row[1][4],
         zone_total: countriesTotals[index]
       }))
@@ -214,7 +211,6 @@ class MapRGL extends Component {
 
   render() {
     const { viewport, popupInfo, showPopup, countriesPaint } = this.state
-    const { totalFlow } = popupInfo || 0
     const { euMap, branchGeo, geoDataReady } = this.props
 
     return (
@@ -267,44 +263,12 @@ class MapRGL extends Component {
             </>
           )}
         </MapGL>
-        <RightBar isOpen={this.props.isTableVisible} close={() => this.props.showTable()}>
-          {popupInfo && (
-            <>
-              <div style={{ margin: '3px 2px' }}>
-                <Chip
-                  avatar={<Avatar>B</Avatar>}
-                  label={`branch: ${this.props.branchName}`}
-                  color='primary'
-                  // deleteIcon={<DoneIcon />}
-                  variant='outlined'
-                  style={{ marginRight: '5px' }}
-                />
-                <Chip
-                  avatar={<Avatar>T</Avatar>}
-                  style={{ marginRight: '5px' }}
-                  label={`total flow: ${
-                    totalFlow >= 0 ? totalFlow + ' - DIR' : -totalFlow + ' - OPP'
-                  }`}
-                  color='primary'
-                  // deleteIcon={<DoneIcon />}
-                  variant='outlined'
-                />
-                <Chip
-                  avatar={<Avatar>F</Avatar>}
-                  label={`Fmax: ${popupInfo.properties.F_MAX}`}
-                  color='primary'
-                  // deleteIcon={<DoneIcon />}
-                  variant='outlined'
-                />
-              </div>
-              <Table
-                columns={popupInfo.columns}
-                rows={popupInfo.rowsForSort}
-                headRow={popupInfo.headRow}
-              />
-            </>
-          )}
-        </RightBar>
+        <MapRightPanel
+          isOpen={this.props.isTableVisible}
+          close={() => this.props.showTable()}
+          popupInfo={popupInfo}
+        />
+        {/* <LegendWidget /> */}
       </>
     )
   }
