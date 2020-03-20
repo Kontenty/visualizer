@@ -55,6 +55,15 @@ const options = {
   PST: 'PST flows [MW]'
 }
 
+const formatCoName = name => {
+  if (name.includes(' + ')) {
+    // const splited = name.split(' + ')
+    return name.split(' + ').join('   ')
+  }
+
+  return name
+}
+
 const BranchDetailControl = ({
   branchName,
   coName,
@@ -85,7 +94,7 @@ const BranchDetailControl = ({
         {`CB: ${branchName}` || '...'}
       </Typography>
       <Typography variant='subtitle1' align='center'>
-        {`CO: ${coName}` || '...'}
+        {`CO: ${formatCoName(coName)}` || '...'}
       </Typography>
       <Typography variant='subtitle2' align='center'>
         Select flow type

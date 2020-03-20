@@ -16,6 +16,7 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 import BranchDetailControl from './BranchDetailControl'
 import { setColorScheme } from 'slices/mapLookSlice'
 import { fetchBranchData } from 'slices/geoDataSlice'
+import { clearOut } from 'slices/branchDetailSlice'
 
 const drawerWidth = 290
 
@@ -48,7 +49,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const colors = ['orange', 'red', 'blue']
+const colors = ['red', 'orange', 'blue']
 
 const fileList = [
   'VIZ-DEC_20181121_0630_FO3_UC8_PFC.json',
@@ -64,8 +65,19 @@ const fileList = [
 ]
 
 // --- component function
-const SideBar = ({ colorScheme, setColorScheme, branchDataName, fetchBranchData }) => {
+const SideBar = ({
+  colorScheme,
+  setColorScheme,
+  branchDataName,
+  fetchBranchData,
+  clearOut
+}) => {
   const classes = useStyles()
+
+  const handleSelect = value => {
+    fetchBranchData(value)
+    clearOut()
+  }
 
   return (
     <Drawer
@@ -102,7 +114,7 @@ const SideBar = ({ colorScheme, setColorScheme, branchDataName, fetchBranchData 
           labelId='datasource-select-label'
           id='datasource-select'
           value={branchDataName}
-          onChange={ev => fetchBranchData(ev.target.value)}
+          onChange={ev => handleSelect(ev.target.value)}
         >
           {fileList.map(file => (
             <MenuItem key={file} value={file}>
@@ -139,7 +151,7 @@ const mapStateToProps = ({ branchDetailSlice, mapLook, geoData }) => ({
   colorScheme: mapLook.colorScheme,
   branchDataName: geoData.branchDataName
 })
-const mapDispatch = { setColorScheme, fetchBranchData }
+const mapDispatch = { setColorScheme, fetchBranchData, clearOut }
 
 export default connect(mapStateToProps, mapDispatch)(SideBar)
 
@@ -147,5 +159,6 @@ SideBar.propTypes = {
   colorScheme: PropTypes.string,
   branchDataName: PropTypes.string,
   setColorScheme: PropTypes.func,
-  fetchBranchData: PropTypes.func
+  fetchBranchData: PropTypes.func,
+  clearOut: PropTypes.func
 }

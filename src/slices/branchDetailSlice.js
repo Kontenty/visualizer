@@ -18,6 +18,11 @@ const branchDetailSlice = createSlice({
     setCOName(state, action) {
       state.coName = action.payload
     },
+    clearOut(state) {
+      state.branchName = ''
+      state.coName = ''
+      state.selectedCategories = []
+    },
     toggleVisibility(state) {
       state.isVisible = !state.isVisible
     },
@@ -35,7 +40,8 @@ export const {
   showTable,
   selectCategory,
   setBranchName,
-  setCOName
+  setCOName,
+  clearOut
 } = branchDetailSlice.actions
 
 export default branchDetailSlice.reducer

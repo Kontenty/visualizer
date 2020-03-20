@@ -120,7 +120,7 @@ class MapRGL extends Component {
       const colorScale =
         min < 0 && max > 0
           ? scaleDiverging(normalizedMinMax, t =>
-              colorsDict.div[this.props.colorScheme](t)
+              colorsDict.div[this.props.colorScheme](1 - t)
             )
           : scaleSequential(normalizedMinMax, t =>
               colorsDict.seq[this.props.colorScheme](t)
@@ -275,9 +275,17 @@ class MapRGL extends Component {
                 />
                 <Chip
                   avatar={<Avatar>T</Avatar>}
+                  style={{ marginRight: '5px' }}
                   label={`total flow: ${
                     totalFlow >= 0 ? totalFlow + ' - DIR' : -totalFlow + ' - OPP'
                   }`}
+                  color='primary'
+                  // deleteIcon={<DoneIcon />}
+                  variant='outlined'
+                />
+                <Chip
+                  avatar={<Avatar>F</Avatar>}
+                  label={`F max: ${popupInfo.properties.F_MAX}`}
                   color='primary'
                   // deleteIcon={<DoneIcon />}
                   variant='outlined'

@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  colorScheme: 'orange',
+  colorScheme: 'red',
   mapboxStyle: 'light-v10'
 }
 
