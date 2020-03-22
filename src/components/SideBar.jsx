@@ -146,8 +146,8 @@ const SideBar = ({
   )
 }
 
-const mapStateToProps = ({ branchDetailSlice, mapLook, geoData }) => ({
-  showSelector: branchDetailSlice.isVisible,
+const mapStateToProps = ({ branchDetail, mapLook, geoData }) => ({
+  showSelector: branchDetail.isVisible,
   colorScheme: mapLook.colorScheme,
   branchDataName: geoData.branchDataName
 })

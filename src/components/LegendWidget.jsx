@@ -1,45 +1,27 @@
-import React, { useState, useMemo } from 'react'
-import { CSSTransition } from 'react-transition-group'
+import React, { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { Transition } from 'react-transition-group'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
-import { AppBar, Fab, Tabs, Tab } from '@material-ui/core'
+import Fab from '@material-ui/core/Fab'
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
-import LinearScaleIcon from '@material-ui/icons/LinearScale'
-import BarChartIcon from '@material-ui/icons/BarChart'
-import Typography from '@material-ui/core/Typography'
+import styled from 'styled-components'
+// import { select } from 'd3-selection'
+import { scaleDiverging, scaleSequential, scaleLinear } from 'd3-scale'
+// import { axisRight } from 'd3-axis'
+import * as d3 from 'd3'
 
-// import BarChart from './DgwBarChart';
-// import Legend from './DgwLegend';
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props
-
-  return (
-    <Typography
-      component='div'
-      role='tabpanel'
-      hidden={value !== index}
-      id={`scrollable-force-tabpanel-${index}`}
-      aria-labelledby={`scrollable-force-tab-${index}`}
-      {...other}
-    >
-      {value === index && children}
-    </Typography>
-  )
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired
-}
-
-function a11yProps(index) {
-  return {
-    id: `scrollable-force-tab-${index}`,
-    'aria-controls': `scrollable-force-tabpanel-${index}`
+const StyleD = styled.div`
+  padding: 15px 25px;
+  display: flex;
+  justify-content: center;
+  .tick text {
+    font-size: 12px;
   }
-}
+  display: ${({ state }) => (state === 'exited' ? 'none' : 'block')};
+  transition: 300ms ease;
+  opacity: ${({ state }) => (state === 'entered' ? 1 : 0.01)};
+`
 
 const useStyles = makeStyles({
   root: {
@@ -53,95 +35,125 @@ const useStyles = makeStyles({
     position: 'relative',
     left: '-18px',
     top: '-13px'
-  },
-  tabswrapper: isVisible => ({
-    transition: 'opacity 500ms ease-in-out',
-    opacity: isVisible ? 1 : 0
-  }),
-  tabContent: {
-    backgroundColor: 'rgba(255,255,255, 0.3)'
   }
 })
 
-export default function LegendWidget({
-  data,
-  middle,
-  colorPalette,
-  mapColor,
-  graphMinMax,
-  colorScaleType
-}) {
-  const [tabNo, setTabNo] = React.useState(0)
+export function LegendWidget({ colorPalette }) {
   const [isVisible, setIsVisible] = useState(false)
   const classes = useStyles(isVisible)
 
-  const handleChange = (event, newValue) => {
-    setTabNo(newValue)
+  const colorScaleType = useSelector(({ mapLook }) => mapLook.colorScaleType)
+  const colorScheme = useSelector(({ mapLook }) => mapLook.colorScheme)
+  const minMax = useSelector(({ branchDetail }) => branchDetail.normMinMax)
+  const sumPerZone = useSelector(({ branchDetail }) => branchDetail.sumPerZone)
+
+  const calcColors = num => {
+    // const values = Object.values(data);
+    // const domain = [d3.min(values), d3.mean(values), d3.max(values)];
+    const scale =
+      colorScaleType === 'diverging'
+        ? scaleDiverging([0, 0.5, 1], t => colorPalette.div[colorScheme](1 - t))
+        : scaleSequential([0, 1], t => colorPalette.seq[colorScheme](t))
+    return scale(num)
   }
 
-  const calcDataForBar = dt => {
-    let result = []
-    Object.keys(dt)
-      .sort((a, b) => dt[b] - dt[a])
-      .forEach(key => {
-        result.push({
-          country: key,
-          value: Math.round(dt[key] * 100) / 100
-        })
-      })
-    return result
-  }
+  function drawLegend() {
+    const valuesArr = [...sumPerZone].sort((a, b) => b - a)
+    const height = 400
+    const width = 100
 
-  const dataForBar = useMemo(() => calcDataForBar(data), [data, mapColor])
+    // clear svg before adding new
+    /* select('#legend-svg')
+      .select('svg')
+      .remove() */
+
+    const svg = d3
+      .select('#legend-svg')
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height)
+
+    const gradient = svg
+      .append('defs')
+      .append('svg:linearGradient')
+      .attr('id', 'gradient')
+      .attr('x1', '0%')
+      .attr('y1', '90%')
+      .attr('x2', '0%')
+      .attr('y2', '10%')
+      .attr('spreadMethod', 'pad')
+
+    const uniqueArr = [...new Set(valuesArr)]
+
+    const gradientData = []
+    for (let i = 0; i < uniqueArr.length; i++) {
+      const position = i / (uniqueArr.length - 1)
+
+      gradientData.push({ offset: position, color: calcColors(position) })
+    }
+
+    gradient
+      .selectAll('stop')
+      .data(gradientData)
+      .enter()
+      .append('stop')
+      .attr('offset', d => d.offset)
+      .attr('stop-color', d => d.color)
+
+    // add gradient to svg
+    svg
+      .append('rect')
+      .attr('width', width * 0.4)
+      .attr('height', height)
+      .style('fill', 'url(#gradient)')
+
+    // create scale for axis
+    const axisScale = scaleLinear()
+      .domain(minMax)
+      .nice()
+      .range([height - 40, 0])
+
+    const legendAxis = d3
+      .axisRight()
+      .scale(axisScale)
+      .tickFormat(d => Math.round(d).toLocaleString('pl'))
+      .tickPadding(6)
+    // .tickFormat(d3.format(', 0f'))
+
+    svg
+      .append('g')
+      .attr('transform', 'translate(45, 20)')
+      .call(legendAxis)
+  }
+  useEffect(() => {
+    if (sumPerZone.length > 0) drawLegend()
+  }, [sumPerZone])
 
   return (
     <div id='data-widget' className={classes.root}>
       <Fab
         color='primary'
-        size='medium'
+        size='small'
         className={classes.infoBtn}
         onClick={() => setIsVisible(!isVisible)}
         aria-label='add'
       >
         <InfoOutlinedIcon />
       </Fab>
-      <CSSTransition in={isVisible} classNames='fade-scale' timeout={500} unmountOnExit>
-        <div>
-          <AppBar position='static'>
-            <Tabs value={tabNo} onChange={handleChange} aria-label='data tabs'>
-              <Tab icon={<LinearScaleIcon />} {...a11yProps(0)} />
-              <Tab icon={<BarChartIcon />} {...a11yProps(1)} />
-            </Tabs>
-          </AppBar>
-          {/* <TabPanel value={tabNo} index={0}>
-            <div className={classes.tabContent}>
-              <Legend
-                data={data}
-                middle={middle}
-                colorPalette={colorPalette}
-                colorScaleType={colorScaleType}
-              />
-            </div>
-          </TabPanel>
-          <TabPanel value={tabNo} index={1}>
-            <div className={classes.tabContent}>
-              <BarChart
-                chartData={dataForBar}
-                colorPalette={colorPalette}
-                data={data}
-                graphMinMax={graphMinMax}
-              />
-            </div>
-          </TabPanel> */}
-        </div>
-      </CSSTransition>
+      <Transition in={isVisible} timeout={300} unmountOnExit>
+        {state => (
+          <StyleD state={state}>
+            <h2>hello</h2>
+            <div id='legend-svg' />
+          </StyleD>
+        )}
+      </Transition>
     </div>
   )
 }
 
+export default React.memo(LegendWidget)
+
 LegendWidget.propTypes = {
-  data: PropTypes.object.isRequired,
-  middle: PropTypes.string.isRequired,
-  colorPalette: PropTypes.func.isRequired,
-  graphMinMax: PropTypes.object.isRequired
+  colorPalette: PropTypes.object.isRequired
 }

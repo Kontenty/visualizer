@@ -2,7 +2,6 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { Marker } from 'react-map-gl'
 import styled from 'styled-components'
-import { find } from 'lodash'
 import { bearing, point } from '@turf/turf'
 import { ReactComponent as ArrowSvg } from 'assets/arrow.svg'
 
@@ -24,7 +23,7 @@ const BranchMarkers = ({ zoom }) => {
     .filter(ft => ft.geometry.type === 'LineString')
     .map(ft => {
       const id = `${ft.properties['CB Node 1']}->${ft.properties['CB Node 2']}`
-      const centerFt = find(branchCenters.features, o => o.properties.id === id)
+      const centerFt = branchCenters.features.find(o => o.properties.id === id)
       if (centerFt) {
         const { geometry, properties } = centerFt
         const point1 = point(ft.geometry.coordinates[0])

@@ -133,7 +133,7 @@ EnhancedTableHead.propTypes = {
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
   orderBy: PropTypes.string.isRequired,
   additionalRow: PropTypes.array,
-  totalFlow: PropTypes.string.isRequired
+  totalFlow: PropTypes.number.isRequired
 }
 
 const useStyles = makeStyles(theme => ({

@@ -54,7 +54,7 @@ const MapRightPanel = ({ popupInfo, isOpen, close }) => {
 export default MapRightPanel
 
 MapRightPanel.propTypes = {
-  popupInfo: PropTypes.object.isRequired,
-  isOpen: PropTypes.func.isRequired,
+  popupInfo: PropTypes.object,
+  isOpen: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired
 }

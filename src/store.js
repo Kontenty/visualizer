@@ -1,10 +1,10 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
-import logger from 'redux-logger'
+// import logger from 'redux-logger'
 import rootReducer from './reducers'
 
 const storeDev = configureStore({
   reducer: rootReducer,
-  middleware: [...getDefaultMiddleware(), logger]
+  middleware: [...getDefaultMiddleware()]
 })
 
 const storeProd = configureStore({

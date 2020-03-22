@@ -5,10 +5,12 @@ const initialState = {
   coName: '',
   isVisible: true,
   isTableVisible: false,
-  selectedCategories: []
+  selectedCategories: [],
+  normMinMax: [],
+  sumPerZone: []
 }
 
-const branchDetailSlice = createSlice({
+const branchDetail = createSlice({
   name: 'branchData',
   initialState,
   reducers: {
@@ -31,6 +33,12 @@ const branchDetailSlice = createSlice({
     },
     selectCategory(state, action) {
       state.selectedCategories = action.payload
+    },
+    setMinMax(state, action) {
+      state.normMinMax = action.payload
+    },
+    setSumPerZone(state, action) {
+      state.sumPerZone = action.payload
     }
   }
 })
@@ -41,7 +49,9 @@ export const {
   selectCategory,
   setBranchName,
   setCOName,
-  clearOut
-} = branchDetailSlice.actions
+  clearOut,
+  setMinMax,
+  setSumPerZone
+} = branchDetail.actions
 
-export default branchDetailSlice.reducer
+export default branchDetail.reducer

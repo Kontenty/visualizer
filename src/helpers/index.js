@@ -38,3 +38,10 @@ export function addFeature(geoData) {
   })
   return { ...geoData, features: [...geoData.features, ...pointFeatures] }
 }
+
+export const calcMin = arr => {
+  return Math.min(...arr)
+}
+export const calcMax = arr => {
+  return Math.max(...arr)
+}

@@ -5,3 +5,4 @@ stats.json
 .yarn
 .pnp.js
 .yarnrc.yml
+yarn-error.log

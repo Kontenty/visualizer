@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import MapGL, { Source, Layer } from 'react-map-gl'
-import _ from 'lodash'
 import {
   interpolateOranges,
   interpolateOrRd,
@@ -11,27 +10,30 @@ import {
   interpolateRdBu,
   interpolateRdYlBu
 } from 'd3-scale-chromatic'
-import { scaleSequential, scaleDiverging } from 'd3-scale'
+// import { scaleSequential, scaleDiverging } from 'd3-scale'
 import 'mapbox-gl/dist/mapbox-gl.css'
+import * as d3 from 'd3'
 
 import BranchPopup from './BranchPopup'
 import ZoneMarkers from './ZoneMarkers'
 import MapRightPanel from './MapRightPanel'
-// import LegendWidget from '../LegendWidget'
+import LegendWidget from '../LegendWidget'
 import {
   countriesLineLayer,
   branchLineLayer,
   branchCircleLayer,
   branchArrowLayer
 } from './layerConfig'
-import { fetchGeoData } from 'slices/geoDataSlice'
 
-import { sumArrays, equalArrays, roundTo } from 'helpers'
+import { sumArrays, equalArrays, roundTo, calcMin, calcMax } from 'helpers'
+import { fetchGeoData } from 'slices/geoDataSlice'
+import { setColorScaleType } from 'slices/mapLookSlice'
 import {
-  toggleVisibility,
   showTable,
   setBranchName,
-  setCOName
+  setCOName,
+  setSumPerZone,
+  setMinMax
 } from 'slices/branchDetailSlice'
 import centers from 'assets/zoneCenters.json'
 
@@ -94,6 +96,7 @@ class MapRGL extends Component {
   }
 
   setZoneColor = () => {
+    console.log('set color func')
     const { selectedCategories } = this.props
     if (selectedCategories.length === 0) {
       this.setState({
@@ -110,22 +113,28 @@ class MapRGL extends Component {
       const sumPerCountry = rowData.map(country =>
         country[1].filter((_, i) => countOrNot[i]).reduce((sum, current) => sum + current)
       )
-      const min = _.min(sumPerCountry)
-      const max = _.max(sumPerCountry)
+      const min = calcMin(sumPerCountry)
+      const max = calcMax(sumPerCountry)
       const normalizedMinMax =
         (min < 0 && max < 0) || (min > 0 && max > 0)
           ? [min, max]
           : max > Math.abs(min)
           ? [-max, 0, max]
           : [min, 0, -min]
-
-      const colorScale =
+      /* const colorScale =
         min < 0 && max > 0
           ? scaleDiverging(normalizedMinMax, t =>
               colorsDict.div[this.props.colorScheme](1 - t)
             )
           : scaleSequential(normalizedMinMax, t =>
               colorsDict.seq[this.props.colorScheme](t)
+            ) */
+      const colorScale =
+        max <= 0.99 || min >= -0.99
+          ? d3.scaleQuantile(sumPerCountry, ['#e66101', '#fdb863', '#f7f7f7'].reverse())
+          : d3.scaleThreshold(
+              [min * 0.5, min * 0.1, max * 0.1, max * 0.5],
+              ['#e66101', '#fdb863', '#f7f7f7', '#b2abd2', '#5e3c99'].reverse()
             )
 
       const netPositions = []
@@ -143,6 +152,11 @@ class MapRGL extends Component {
         countriesPaint: { 'fill-opacity': 0.97, 'fill-color': fillExpression },
         netPositions
       })
+      this.props.setColorScaleType(
+        max <= 0.99 || min >= -0.99 ? 'sequential' : 'diverging'
+      )
+      this.props.setSumPerZone(sumPerCountry)
+      this.props.setMinMax(normalizedMinMax)
     }
   }
 
@@ -268,18 +282,18 @@ class MapRGL extends Component {
           close={() => this.props.showTable()}
           popupInfo={popupInfo}
         />
-        {/* <LegendWidget /> */}
+        <LegendWidget colorPalette={colorsDict} />
       </>
     )
   }
 }
-function mapStateToProps({ mapLook, branchDetailSlice, geoData }) {
+function mapStateToProps({ mapLook, branchDetail, geoData }) {
   return {
     mapboxStyle: mapLook.mapboxStyle,
     colorScheme: mapLook.colorScheme,
-    isTableVisible: branchDetailSlice.isTableVisible,
-    selectedCategories: branchDetailSlice.selectedCategories,
-    branchName: branchDetailSlice.branchName,
+    isTableVisible: branchDetail.isTableVisible,
+    selectedCategories: branchDetail.selectedCategories,
+    branchName: branchDetail.branchName,
     euMap: geoData.euMap,
     branchGeo: geoData.branchGeo,
     branchCenters: geoData.branchCenters,
@@ -287,11 +301,13 @@ function mapStateToProps({ mapLook, branchDetailSlice, geoData }) {
   }
 }
 const mapDispatch = {
-  toggleVisibility,
   showTable,
   setBranchName,
   setCOName,
-  fetchGeoData
+  setColorScaleType,
+  fetchGeoData,
+  setMinMax,
+  setSumPerZone
 }
 export default connect(mapStateToProps, mapDispatch)(MapRGL)
 
@@ -304,9 +320,11 @@ MapRGL.propTypes = {
   euMap: PropTypes.object,
   branchGeo: PropTypes.object,
   geoDataReady: PropTypes.bool.isRequired,
-  toggleVisibility: PropTypes.func.isRequired,
   setBranchName: PropTypes.func.isRequired,
   setCOName: PropTypes.func.isRequired,
   showTable: PropTypes.func.isRequired,
-  fetchGeoData: PropTypes.func.isRequired
+  fetchGeoData: PropTypes.func.isRequired,
+  setColorScaleType: PropTypes.func.isRequired,
+  setMinMax: PropTypes.func.isRequired,
+  setSumPerZone: PropTypes.func.isRequired
 }

@@ -1,13 +1,13 @@
 import { combineReducers } from 'redux'
 
-import branchDetailSlice from 'slices/branchDetailSlice'
-import geoDataSlice from 'slices/geoDataSlice'
-import mapLookSlice from 'slices/mapLookSlice'
+import branchDetail from 'slices/branchDetailSlice'
+import geoData from 'slices/geoDataSlice'
+import mapLook from 'slices/mapLookSlice'
 
 const rootReducer = combineReducers({
-  mapLook: mapLookSlice,
-  branchDetailSlice,
-  geoData: geoDataSlice
+  mapLook,
+  branchDetail,
+  geoData
 })
 
 export default rootReducer

@@ -26,7 +26,7 @@ const ZoneMarkers = ({ data, zoom, colors }) => {
             offsetLeft={-7}
             offsetTop={-7}
             fontBase={zoom}
-            fontColor={hsl(color).l < 0.4 ? 'white' : 'black'}
+            fontColor={hsl(color).l < 0.49 ? 'white' : 'black'}
           >
             {netPos.name}
             <br />

@@ -142,11 +142,11 @@ const BranchDetailControl = ({
   )
 }
 
-function mapStateToProps({ branchDetailSlice }) {
+function mapStateToProps({ branchDetail }) {
   return {
-    isTableVisible: branchDetailSlice.isTableVisible,
-    branchName: branchDetailSlice.branchName,
-    coName: branchDetailSlice.coName
+    isTableVisible: branchDetail.isTableVisible,
+    branchName: branchDetail.branchName,
+    coName: branchDetail.coName
   }
 }
 
