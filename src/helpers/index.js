@@ -45,3 +45,23 @@ export const calcMin = arr => {
 export const calcMax = arr => {
   return Math.max(...arr)
 }
+
+export const sort = (arr, dir = 'asc') => {
+  if (dir === 'asc') {
+    return arr.sort((a, b) => a - b)
+  } else if (dir === 'desc') {
+    return arr.sort((a, b) => b - a)
+  }
+}
+
+export const quantile = (arr, q) => {
+  const sorted = sort(arr)
+  const pos = (sorted.length - 1) * q
+  const base = Math.floor(pos)
+  const rest = pos - base
+  if (sorted[base + 1] !== undefined) {
+    return sorted[base] + rest * (sorted[base + 1] - sorted[base])
+  } else {
+    return sorted[base]
+  }
+}

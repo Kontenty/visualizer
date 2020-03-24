@@ -80,14 +80,15 @@ const BranchDetailControl = ({
   coName,
   showTable,
   isTableVisible,
+  selectedCategories,
   selectCategory
 }) => {
   const classes = useStyles()
-  const [checked, setChecked] = React.useState([])
+  // const [checked, setChecked] = React.useState([])
 
   const handleToggle = value => () => {
-    const currentIndex = checked.indexOf(value)
-    const newChecked = [...checked]
+    const currentIndex = selectedCategories.indexOf(value)
+    const newChecked = [...selectedCategories]
 
     if (currentIndex === -1) {
       newChecked.push(value)
@@ -95,7 +96,7 @@ const BranchDetailControl = ({
       newChecked.splice(currentIndex, 1)
     }
 
-    setChecked(newChecked)
+    // setChecked(newChecked)
     selectCategory(newChecked)
   }
 
@@ -124,7 +125,7 @@ const BranchDetailControl = ({
             <ListItemSecondaryAction>
               <Switch
                 edge='end'
-                checked={checked.indexOf(key) !== -1}
+                checked={selectedCategories.indexOf(key) !== -1}
                 onChange={handleToggle(key)}
                 value={key}
               />
@@ -146,6 +147,7 @@ function mapStateToProps({ branchDetail }) {
   return {
     isTableVisible: branchDetail.isTableVisible,
     branchName: branchDetail.branchName,
+    selectedCategories: branchDetail.selectedCategories,
     coName: branchDetail.coName
   }
 }
@@ -157,6 +159,7 @@ export default connect(mapStateToProps, { showTable, selectCategory })(
 BranchDetailControl.propTypes = {
   branchName: PropTypes.string.isRequired,
   coName: PropTypes.string.isRequired,
+  selectedCategories: PropTypes.array.isRequired,
   isTableVisible: PropTypes.bool.isRequired,
   showTable: PropTypes.func.isRequired,
   selectCategory: PropTypes.func.isRequired

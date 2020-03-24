@@ -127,6 +127,7 @@ export function LegendWidget({ colorPalette }) {
   }
   useEffect(() => {
     if (sumPerZone.length > 0) drawLegend()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sumPerZone])
 
   return (

@@ -17,7 +17,7 @@ import * as d3 from 'd3'
 import BranchPopup from './BranchPopup'
 import ZoneMarkers from './ZoneMarkers'
 import MapRightPanel from './MapRightPanel'
-import LegendWidget from '../LegendWidget'
+// import LegendWidget from '../LegendWidget'
 import {
   countriesLineLayer,
   branchLineLayer,
@@ -129,12 +129,24 @@ class MapRGL extends Component {
           : scaleSequential(normalizedMinMax, t =>
               colorsDict.seq[this.props.colorScheme](t)
             ) */
+      const colors = {
+        blue_red: [
+          '#37b8e9',
+          '#8bceea',
+          '#c7e7ea',
+          '#fdfbe1',
+          '#fcceb9',
+          '#f79c86',
+          '#f06950'
+        ],
+        pur_orange: ['#e66101', '#fdb863', '#f7f7f7', '#b2abd2', '#5e3c99']
+      }
       const colorScale =
         max <= 0.99 || min >= -0.99
           ? d3.scaleQuantile(sumPerCountry, ['#e66101', '#fdb863', '#f7f7f7'].reverse())
           : d3.scaleThreshold(
               [min * 0.5, min * 0.1, max * 0.1, max * 0.5],
-              ['#e66101', '#fdb863', '#f7f7f7', '#b2abd2', '#5e3c99'].reverse()
+              colors.pur_orange.reverse()
             )
 
       const netPositions = []
@@ -282,7 +294,7 @@ class MapRGL extends Component {
           close={() => this.props.showTable()}
           popupInfo={popupInfo}
         />
-        <LegendWidget colorPalette={colorsDict} />
+        {/* <LegendWidget colorPalette={colorsDict} /> */}
       </>
     )
   }
